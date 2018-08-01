@@ -1,0 +1,7 @@
+{
+  "SERVERADMIN_SETTINGS_VALUE": "you need to tell me both a setting and a value.",
+  "SERVERADMIN_SETTINGS_SAVED": " settings saved! :thumbsup:",
+  "SERVERADMIN_SETTINGS_NEEDCHANNEL": "you need to tell me which channel to use.",
+  "SERVERADMIN_SETTINGS_NOMENTIONS": "you cannot set the command prefix to mention any user but me.",
+  "SERVERADMIN_SETTINGS_ALLOWEDLOCALES": "Available languages include: "
+}
