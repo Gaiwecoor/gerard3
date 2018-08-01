@@ -2,8 +2,7 @@ const Augur = require("../utils/Augur"),
   Module = new Augur.Module(),
   u = require("../utils/utils");
 
-Module.addCommand({
-  name: "help",
+Module.addCommand({name: "help",
   aliases: ["commands"],
   process: (msg, suffix) => {
     u.clean(msg);

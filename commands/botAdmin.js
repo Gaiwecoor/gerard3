@@ -40,9 +40,8 @@ Module.addCommand({name: "pulse",
       msg.channel.send({embed: embed});
     }
   }
-});
-
-Module.addCommand({name: "gotobed",
+})
+.addCommand({name: "gotobed",
   category: "Admin",
   hidden: true,
   process: async function(msg) {
@@ -54,9 +53,8 @@ Module.addCommand({name: "gotobed",
     }
   },
   permissions: (msg) => Module.config.adminId.includes(msg.author.id)
-});
-
-Module.addCommand({name: "reload",
+})
+.addCommand({name: "reload",
   category: "Admin",
   syntax: "<file1.js> <file2.js>",
   description: "Reload command files.",

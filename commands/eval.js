@@ -1,8 +1,7 @@
 const Augur = require("../utils/Augur"),
   Module = new Augur.Module();
 
-Module.addCommand({
-  name: "eval",
+Module.addCommand({name: "eval",
   hidden: true,
   category: "Admin",
   process: (msg, suffix) => {
@@ -19,9 +18,8 @@ Module.addCommand({
     }
   },
   permissions: (msg) => msg.author.id === Module.config.ownerId
-});
-
-Module.addCommand({
+})
+.addCommand({
   name: "seval",
   hidden: true,
   category: "Admin",
