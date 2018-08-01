@@ -19,8 +19,7 @@ Module.addCommand({name: "eval",
   },
   permissions: (msg) => msg.author.id === Module.config.ownerId
 })
-.addCommand({
-  name: "seval",
+.addCommand({name: "seval",
   hidden: true,
   category: "Admin",
   process: (msg, suffix) => {
