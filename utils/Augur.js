@@ -1,7 +1,8 @@
 const fs = require("fs"),
   Collection = require("discord.js").Collection,
   path = require("path"),
-  u = require("./utils");
+  u = require("./utils"),
+  locales = new Map();
 
 /**********************
 **  COMMAND HANDLER  **
@@ -62,6 +63,8 @@ Handler.prototype.register = function(file) {
   } catch(e) {
     u.errorLog.send(`**ERROR:** Could not register command file \`${file}\`\n` + e.stack.slice(0, 900));
   }
+
+  return this;
 };
 
 Handler.prototype.reload = function(file = null) {
@@ -93,6 +96,8 @@ Handler.prototype.reload = function(file = null) {
   catch(e) {
     console.error(e);
   }
+
+  return this;
 };
 
 Handler.prototype.execute = function(command, msg, suffix) {
@@ -125,18 +130,31 @@ const Module = function() {
 
 Module.prototype.addCommand = function(info) {
   this.commands.push(new Command(info));
+  return this;
 };
 
 Module.prototype.addEvent = function(name, handler) {
   this.events.set("name", handler);
+  return this;
 };
 
 Module.prototype.addClockwork = function(clockworkFunction) {
   this.clockwork = clockworkFunction;
+  return this;
 };
 
 Module.prototype.setUnload = function(unload) {
   this.unload = unload;
+  return this;
+};
+
+Module.prototype.locale = function(msg, text) {
+  let locale = (msg.guild ? u.getSetting(msg.guild, "language") : "EN");
+  if (!locales.has(locale)) {
+    let data = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "./locales/", `locale_${locale}.json`)));
+    locales.set(locale, data);
+  }
+  return locales.get(locale)[text];
 };
 
 /********************
