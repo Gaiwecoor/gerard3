@@ -13,7 +13,7 @@ function processMessage(msg) {
     let prefix = u.prefix(msg);
     if (msg.cleanContent.startsWith(prefix)) {
       let parse = message.slice(prefix.length).trim().split(" ");
-      let command = parse.shift();
+      let command = parse.shift().toLowerCase();
       Handler.execute(command, msg, parse.join(" "));
     }
   }
