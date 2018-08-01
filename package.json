@@ -1,0 +1,20 @@
+{
+  "name": "augur",
+  "version": "1.0.0",
+  "description": "Discord bot framework",
+  "main": "base.js",
+  "dependencies": {
+    "discord.js": "^11.3.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://bitbucket.org/Gaiwecoor/augur.git"
+  },
+  "author": "Kevin \"Gaiwecoor\" Dixon",
+  "license": "MIT",
+  "homepage": "https://bitbucket.org/Gaiwecoor/augur/src/master/README.md"
+}
