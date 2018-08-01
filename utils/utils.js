@@ -6,6 +6,7 @@ const Discord = require("discord.js"),
   db = require("../models/" + config.db.model);
 
 module.exports = {
+  db: db,
   // ERROR LOGGING
   alertError: function(msg, error) {
     let bot = msg.client;
