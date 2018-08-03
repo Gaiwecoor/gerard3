@@ -25,12 +25,12 @@ Module.addCommand({name: "settings",
       // BOT SPAM
       if (msg.mentions.channels.size > 0) {
         // SAVE BY MENTION
-        u.db.saveSetting(msg.guild, 'botspam', msg.mentions.channels.first().id);
+        u.db.server.saveSetting(msg.guild, 'botspam', msg.mentions.channels.first().id);
         msg.channel.send("BotSpam" + Module.locale(msg, "SERVERADMIN_SETTINGS_SAVED"))
         .then(u.clean).catch(console.error);
       } else if ((value == "none") || (value == "false")) {
         // REMOVE BOTSPAM
-        u.db.updateSetting(msg.guild, 'botspam', null);
+        u.db.server.updateSetting(msg.guild, 'botspam', null);
         msg.channel.send("BotSpam" + Module.locale(msg, "SERVERADMIN_SETTINGS_SAVED"))
         .then(u.clean).catch(console.error);
       } else {
@@ -42,7 +42,7 @@ Module.addCommand({name: "settings",
           channel = msg.guild.channels.find('name', value);
         }
         if (channel) {
-          u.db.saveSetting(msg.guild, 'botspam', channel.id);
+          u.db.server.saveSetting(msg.guild, 'botspam', channel.id);
           msg.channel.send("BotSpam" + Module.locale(msg, "SERVERADMIN_SETTINGS_SAVED"))
           .then(u.clean).catch(console.error);
         } else {
@@ -56,14 +56,14 @@ Module.addCommand({name: "settings",
       if ((userMentions.size > 1) || ((userMentions.size == 1) && (userMentions.first().id != bot.user.id))) {
         msg.reply(Module.locale(msg, "SERVERADMIN_SETTINGS_NOMENTIONS")).then(u.clean);
       } else {
-        u.db.saveSetting(msg.guild, 'prefix', value);
+        u.db.server.saveSetting(msg.guild, 'prefix', value);
         msg.channel.send("Prefix" + Module.locale(msg, "SERVERADMIN_SETTINGS_SAVED"))
         .then(u.clean).catch(console.error);
       }
     } else if ((setting == 'language') || (setting == 'locale')) {
       let locales = ["EN", "FR"];
       if (locales.includes(value.toUpperCase())) {
-        u.db.saveSetting(msg.guild, "language", value.toUpperCase());
+        u.db.server.saveSetting(msg.guild, "language", value.toUpperCase());
         msg.channel.send("Language" + Module.locale(msg, "SERVERADMIN_SETTINGS_SAVED"))
         .then(u.clean).catch(console.error);
       } else {

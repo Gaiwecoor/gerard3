@@ -41,7 +41,7 @@ module.exports = {
   },
 
   prefix: function(msg) {
-    if (msg.guild) return db.getSetting(msg.guild, "prefix");
+    if (msg.guild) return db.server.getSetting(msg.guild, "prefix");
     else return config.prefix;
   },
 
