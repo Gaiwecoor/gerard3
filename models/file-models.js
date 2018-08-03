@@ -2,72 +2,221 @@
 // DO NOT USE FOR SHARDED BOTS
 
 const fs = require("fs"),
+  path = require("path"),
   config = require("../config/config.json"),
   files = {
-    servers: process.cwd() + "/data/servers.json"
+    servers: path.resolve(process.cwd(), "./data/servers.json"),
+    users: path.resolve(process.cwd(), "./data/users.json")
   },
+  userSettings = new Map(),
   serverSettings = new Map();
 
-var update = false;
+var serverUpdate = false,
+  userUpdate = false;
+
+function updateServerData() {
+  if (serverUpdate) {
+    fs.readFileSync(files.servers, (err, data) => {
+      if (err) return;
+      else {
+        data = JSON.parse(data);
+        serverSettings.forEach((server, id) => {
+          data[id] = server;
+        });
+        fs.writeFile(files.servers, JSON.stringify(data), (err) => {
+          if (err) console.error(err);
+          else {
+            serverUpdate = false;
+            console.log("Server settings saved.");
+          }
+        });
+      }
+    });
+  }
+};
+
+function updateUserData() {
+  if (userUpdate) {
+    fs.readFileSync(files.users, (err, data) => {
+      if (err) return;
+      else {
+        data = JSON.parse(data);
+        userSettings.forEach((user, id) => {
+          data[id] = user;
+        });
+        fs.writeFile(files.users, JSON.stringify(data), (err) => {
+          if (err) console.error(err);
+          else {
+            userUpdate = false;
+            console.log("User settings saved.");
+          }
+        });
+      }
+    });
+  }
+};
 
 // Safe save for filesystem settings.
 setTimeout(() => {
-  if (update) {
-    let data = JSON.parse(fs.readFileSync(files.servers));
-    serverSettings.forEach((server, id) => {
-      data[id] = server;
-    });
-    fs.writeFile(files.servers, JSON.stringify(data), (err) => {
-      if (err) console.error(err);
-      else {
-        update = false;
-        console.log("Settings saved.");
-      }
-    });
-  }
+  updateServerData();
+  updateUserData();
 }, 60000);
 
-module.exports = {
-  getSetting: function(guild, setting) {
-    if (serverSettings.has(guild.id)) {
-      return serverSettings.get(guild.id)[setting];
-    } else {
-      let data = JSON.parse(fs.readFileSync(files.servers));
-      if (data[guild.id]) {
-        serverSettings.set(guild.id, data[guild.id]);
-        return data[guild.id][setting];
-      } else {
-        let defaultSettings = {
-          serverId: guild.id,
-          prefix: config.prefix,
-          botspam: null,
-          language: "EN"
-        };
-        serverSettings.set(guild.id, defaultSettings);
-        update = true;
-        return defaultSettings[setting];
-      }
+const models = {
+  server: {
+    addServer: (guild) => {
+      return new Promise((fulfill, reject) => {
+        if (serverSettings.has(guild.id)) fulfill(serverSettings.get(guild.id));
+        else {
+          fs.readFile(files.servers, (err, data) => {
+            if (err) reject(err);
+            else {
+              data = JSON.parse(data);
+              if (data[guild.id]) {
+                serverSettings.set(guild.id, data[guild.id]);
+                fulfill(serverSettings.get(guild.id));
+              } else {
+                let defaultSettings = {
+                  serverId: guild.id,
+                  prefix: config.prefix,
+                  botspam: null,
+                  language: "EN"
+                };
+                serverSettings.set(guild.id, defaultSettings);
+                serverUpdate = true;
+                fulfill(serverSettings.get(guild.id));
+              }
+            }
+          });
+        }
+      });
+    },
+    getSetting: (guild, setting) => {
+      return new Promise((fulfill, reject) => {
+        if (serverSettings.has(guild.id)) {
+          fulfill(serverSettings.get(guild.id)[setting]);
+        } else {
+          fs.readFile(files.servers, (err, data) => {
+            if (err) reject(err);
+            else {
+              data = JSON.parse(data);
+              if (data[guild.id]) {
+                serverSettings.set(guild.id, data[guild.id]);
+                fulfill(data[guild.id][setting]);
+              } else {
+                let defaultSettings = {
+                  serverId: guild.id,
+                  prefix: config.prefix,
+                  botspam: null,
+                  language: "EN"
+                };
+                serverSettings.set(guild.id, defaultSettings);
+                serverUpdate = true;
+                fulfill(defaultSettings[setting]);
+              }
+            }
+          });
+        }
+      });
+    },
+    saveSetting: (guild, setting, value) => {
+      return new Promise((fulfill, reject) => {
+        if (serverSettings.has(guild.id)) {
+          serverSettings.get(guild.id)[setting] = value;
+          serverUpdate = true;
+          fulfill(serverSettings.get(guild.id));
+        } else {
+          fs.readFile(files.servers, (err, data) => {
+            if (err) reject(err);
+            else {
+              data = JSON.parse(data);
+              if (data[guild.id]) {
+                data[guild.id][setting] = value;
+                serverSettings.set(guild.id, data[guild.id]);
+                serverUpdate = true;
+                fulfill(serverSettings.get(guild.id));
+              } else {
+                let defaultSettings = {
+                  serverId: guild.id,
+                  prefix: config.prefix,
+                  botspam: null,
+                  language: "EN"
+                };
+                defaultSettings[setting] = value;
+                serverSettings.set(guild.id, defaultSettings);
+                serverUpdate = true;
+                fulfill(serverSettings.get(guild.id));
+              }
+            }
+          });
+        }
+      });
     }
   },
-  saveSetting: function(guild, setting, value) {
-    if (serverSettings.has(guild.id)) {
-      serverSettings.get(guild.id)[setting] = value;
-    } else {
-      let data = JSON.parse(fs.readFileSync(files.servers));
-      if (data[guild.id]) {
-        data[guild.id][setting] = value;
-        serverSettings.set(guild.id, data[guild.id]);
-      } else {
-        let defaultSettings = {
-          serverId: guild.id,
-          prefix: config.prefix,
-          botspam: null,
-          language: "EN"
-        };
-        defaultSettings[setting] = value;
-        serverSettings.set(guild.id, defaultSettings);
-      }
+  user: {
+    addUser: (user) => {
+      return new Promise((fulfill, reject) => {
+        if ((typeof user) !== "string") user = user.id;
+        if (userSettings.has(user)) fulfill(userSettings.get(user));
+        else {
+          fs.readFile(files.users, (err, data) => {
+            if (err) reject(err);
+            else {
+              data = JSON.parse(data);
+              if (data[user]) {
+                userSettings.set(user, data[user]);
+                fulfill(userSettings.get(user));
+              } else {
+                let defaultSettings = {
+                  discordId: user,
+                  language: "EN"
+                };
+                userSettings.set(user, defaultSettings);
+                userUpdate = true;
+                fulfill(userSettings.get(user));
+              }
+            }
+          });
+        }
+      });
+    },
+    getUser: (user) => {
+      return new Promise((fulfill, reject) => {
+        if ((typeof user) !== "string") user = user.id;
+        if (userSettings.has(user)) fulfill(userSettings.get(user));
+        else {
+          fs.readFile(files.users, (err, data) => {
+            if (err) reject(err);
+            else {
+              data = JSON.parse(data);
+              if (data[user]) {
+                userSettings.set(user, data[user]);
+                fulfill(userSettings.get(user));
+              } else {
+                let defaultSettings = {
+                  discordId: user,
+                  language: "EN"
+                };
+                userSettings.set(user, defaultSettings);
+                userUpdate = true;
+                fulfill(userSettings.get(user));
+              }
+            }
+          });
+        }
+      });
+    },
+    saveUser: (user, preference, value) => {
+      if ((typeof user) !== "string") user = user.id;
+      return new Promise((fulfill, reject) => {
+        User.getUser(user).then(userInfo => {
+          userInfo[preference] = value;
+          userSettings.set(userInfo.discordId, userInfo);
+          userUpdate = true;
+        }).catch(reject);
+      })
     }
-    update = true;
   }
-};
+}
+
+module.exports = models;
