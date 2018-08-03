@@ -2,8 +2,7 @@ const fs = require("fs"),
   Collection = require("discord.js").Collection,
   path = require("path"),
   u = require("./utils"),
-  locales = new Map(),
-  db = require(path.resolve(process.cwd(), "./models/", this.config.db.model));
+  locales = new Map();
 
 /**********************
 **  COMMAND HANDLER  **
@@ -18,6 +17,7 @@ const Handler = function(bot, config) {
   this.unload = new Collection();
   this.config = config;
   this.bot = bot;
+  this.db = require(path.resolve(process.cwd(), "./models/", this.config.db.model));
 
   return this;
 };
@@ -28,7 +28,7 @@ Handler.prototype.register = function(file) {
     let load = require(file);
 
     load.config = this.config;
-    load.db = db;
+    load.db = this.db;
     load.handler = this;
 
     // REGISTER COMMANDS & ALIASES
