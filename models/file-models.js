@@ -80,7 +80,7 @@ const models = {
                   serverId: guild.id,
                   prefix: config.prefix,
                   botspam: null,
-                  language: "EN"
+                  language: config.language
                 };
                 serverSettings.set(guild.id, defaultSettings);
                 serverUpdate = true;
@@ -108,7 +108,7 @@ const models = {
                   serverId: guild.id,
                   prefix: config.prefix,
                   botspam: null,
-                  language: "EN"
+                  language: config.language
                 };
                 serverSettings.set(guild.id, defaultSettings);
                 serverUpdate = true;
@@ -140,7 +140,7 @@ const models = {
                   serverId: guild.id,
                   prefix: config.prefix,
                   botspam: null,
-                  language: "EN"
+                  language: config.language
                 };
                 defaultSettings[setting] = value;
                 serverSettings.set(guild.id, defaultSettings);
@@ -169,7 +169,7 @@ const models = {
               } else {
                 let defaultSettings = {
                   discordId: user,
-                  language: "EN"
+                  language: config.language
                 };
                 userSettings.set(user, defaultSettings);
                 userUpdate = true;
@@ -195,7 +195,7 @@ const models = {
               } else {
                 let defaultSettings = {
                   discordId: user,
-                  language: "EN"
+                  language: config.language
                 };
                 userSettings.set(user, defaultSettings);
                 userUpdate = true;
@@ -209,7 +209,7 @@ const models = {
     saveUser: (user, preference, value) => {
       if ((typeof user) !== "string") user = user.id;
       return new Promise((fulfill, reject) => {
-        User.getUser(user).then(userInfo => {
+        models.user.getUser(user).then(userInfo => {
           userInfo[preference] = value;
           userSettings.set(userInfo.discordId, userInfo);
           userUpdate = true;
