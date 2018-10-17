@@ -19,6 +19,8 @@ var ServerSchema = new Schema({
 		type: String,
 		default: null
 	},
+	rankedRoles: [String],
+	regionRoles: [String],
 	challonge: {
 		type: String,
 		default: null
