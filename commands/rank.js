@@ -7,7 +7,7 @@ const Augur = require("augurbot"),
 
 async function awaitNav(msg) {
   try {
-    let { results, index, user } = rankedResults.get(msg.id);
+    let { results, index, user, cache } = rankedResults.get(msg.id);
     let nav = ["◀", "▶"];
 
     await msg.react(nav[0]);
@@ -26,7 +26,7 @@ async function awaitNav(msg) {
       index += (2 * nav.indexOf(reactions.first().emoji.name) - 1);
       if (index < 0) index += results.length;
       else if (index >= results.length) index %= results.length;
-      rankedResults.set(msg.id, { results, index, user });
+      rankedResults.set(msg.id, { results, index, user, cache });
       updateRankedEmbed(msg);
     }
   } catch(e) {
@@ -100,19 +100,33 @@ function rankedEmbed(rank, index = 0, count = null) {
   embed.setTitle(`Ranked Data for ${u.decode(rank.name)}`)
     .addField("Name", name, true)
     .addField("Region", rank.region, true)
-    .addField("Legends", `Highest Rating: ${bh.legendSummaries.get(bestLegend.legend_id).bio_name}\nMost Played: ${bh.legendSummaries.get(rank.legends[0].legend_id).bio_name}`)
-    .addField("1v1 Rating", `**${rank.tier}** (${rank.rating} / ${rank.peak_rating} Peak)\n${rank.winrate}% Winrate` + (rank.global_rank ? `\n**Global Rank** ${rank.global_rank}` : "") + (rank.region_rank ? `\n**${rank.region} Rank** ${rank.region_rank}` : ""));
+    .addField("Legends", `Highest Rating: ${bh.legendSummaries.get(bestLegend.legend_id).bio_name}\nMost Played: ${bh.legendSummaries.get(rank.legends[0].legend_id).bio_name}`, true);
 
   if (count > 1)
-    embed.setDescription(`Result ${(index + 1)} of ${count}. React with ◀ or ▶ within ${(time / 60000).toFixed(1)} minutes to view other results.`);
+    embed.setDescription(`Result ${(index + 1)} of ${count}. React with ◀ or ▶ within ${(time / 60000)} minutes to view other results.`);
+
+  if (rank.power_ranking) {
+    let pr = rank.power_ranking;
+    let overall = pr.overall;
+    let singles = pr["1v1"];
+    let doubles = pr["2v2"];
+
+    embed.addField(`__${pr.season} ${pr.year} Power Rankings__`, "\u200B");
+    if (overall) embed.addField("Overall", `**Rank ${overall.rank}**\nTop 8: ${overall.top8}\nTop 32: ${overall.top32}\n:first_place: ${overall.gold} :second_place: ${overall.silver} :third_place: ${overall.bronze}`, true);
+    if (singles) embed.addField("1v1", `**Rank ${singles.rank}**\nTop 8: ${singles.top8}\nTop 32: ${singles.top32}\n:first_place: ${singles.gold} :second_place: ${singles.silver} :third_place: ${singles.bronze}`, true);
+    if (doubles) embed.addField("2v2", `**Rank ${doubles.rank}**\nTop 8: ${doubles.top8}\nTop 32: ${doubles.top32}\n:first_place: ${doubles.gold} :second_place: ${doubles.silver} :third_place: ${doubles.bronze}`, true);
+  }
+
+  embed.addField("__Ranked Play__", "\u200B")
+  .addField("1v1 Rating", `**${rank.tier}** (${rank.rating} / ${rank.peak_rating} Peak)\n${rank.winrate}% Winrate` + (rank.global_rank ? `\n**Global Rank** ${rank.global_rank}` : "") + (rank.region_rank ? `\n**${rank.region} Rank** ${rank.region_rank}` : ""), true);
 
   if (rank.team) {
     rank.team.loss = rank.team.games - rank.team.wins;
     rank.team.winrate = ((rank.team.games > 0) ? (100 * rank.team.wins / rank.team.games).toFixed(1) : 0);
 
     try {
-      embed.addField("2v2 Team", u.decode(rank.team.teamname))
-      .addField("Team Rating", `**${rank.team.tier}** (${rank.team.rating} / ${rank.team.peak_rating} Peak)\n${rank.team.wins} Wins / ${rank.team.loss} Losses (${rank.team.games} Games)\n${rank.team.winrate}% Winrate`);
+      embed.addField("2v2 Team", u.decode(rank.team.teamname), true)
+      .addField("Team Rating", `**${rank.team.tier}** (${rank.team.rating} / ${rank.team.peak_rating} Peak)\n${rank.team.wins} Wins / ${rank.team.loss} Losses (${rank.team.games} Games)\n${rank.team.winrate}% Winrate`, true);
     } catch(e) { console.error(e); }
   }
 
@@ -224,10 +238,15 @@ function statSites(bhid) {
 
 async function updateRankedEmbed(msg) {
   try {
-    let { results, index, user } = rankedResults.get(msg.id);
+    let { results, index, user, cache } = rankedResults.get(msg.id);
+    let rank = null;
 
-    let result = results[index];
-    let rank = await getFullRank(result);
+    if (cache[index]) {
+      rank = cache[index];
+    } else {
+      rank = await getFullRank(results[index]);
+      cache[index] = rank;
+    }
 
     let channel = msg.channel;
 
@@ -238,7 +257,7 @@ async function updateRankedEmbed(msg) {
     } else {
       msg.delete();
       m = await channel.send(rankedEmbed(rank, index, results.length));
-      rankedResults.set(m.id, { results, index, user });
+      rankedResults.set(m.id, { results, index, user, cache });
       rankedResults.delete(msg.id);
     }
     if (m) awaitNav(m);
@@ -314,9 +333,12 @@ const Module = new Augur.Module()
           try {
             let m = await channel.send(rankedEmbed(rank, 0, results.length));
             if (results.length > 0) {
-              let user = msg.author.id;
-              let index = 0;
-              rankedResults.set(m.id, { results, index, user });
+              rankedResults.set(m.id, {
+                results: results,
+                index: 0,
+                user: msg.author.id,
+                cache: [rank]
+              });
               awaitNav(m);
             }
           } catch(e) {
