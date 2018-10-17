@@ -15,6 +15,14 @@ var ServerSchema = new Schema({
 		type: String,
 		default: config.prefix
 	},
+	announce: {
+		type: String,
+		default: null
+	},
+	challonge: {
+		type: String,
+		default: null
+	},
   language: {
     type: String,
     default: "EN"

@@ -3,33 +3,91 @@ const Discord = require("discord.js"),
   serverSettings = new Map(),
   fs = require("fs"),
   errorLog = new Discord.WebhookClient(config.error.id, config.error.token),
-  db = require("../models/" + config.db.model);
+  db = require("../" + config.db.model);
 
-module.exports = {
-  db: db,
-  // ERROR LOGGING
-  alertError: function(msg, error) {
-    let bot = msg.client;
-    msg.channel.send("I've run into an error. I've let my owner know.")
-      .then(m => m.delete(10000));
-    console.trace(error);
+const Utils = {
+  alertError: function(error, msg = null) {
+    if (!error) return;
 
     let errorInfo = new Discord.RichEmbed()
-    .setTitle(bot.user.username + " Error")
-    .addField("User", msg.author.username, true)
-    .addField("Location", (msg.guild ? `${msg.guild.name} > ${msg.channel.name}` : "PM"), true)
-    .addField("Command", msg.cleanContent, true)
-    .addField("Error", (error.stack ? error.stack.slice(0, 1200) : (error ? error.slice(0, 1000) : "")), true);
+    .setTimestamp()
+    .setTitle(error.name);
 
-    if (bot.shard) errorInfo.addField("Shard", bot.shard.id, true);
+    if (msg) {
+      let bot = msg.client;
+      if (bot.shard) errorInfo.addField("Shard", bot.shard.id, true);
 
+      msg.channel.send("I've run into an error. I've let my owner know.")
+        .then(Utils.clean);
+
+      errorInfo
+      .addField("User", msg.author.username, true)
+      .addField("Location", (msg.guild ? `${msg.guild.name} > ${msg.channel.name}` : "PM"), true)
+      .addField("Command", (msg.cleanContent ? msg.cleanContent : "EMPTY"), true)
+    }
+
+    let errorStack = (error.stack ? error.stack : error.toString());
+
+    console.error(Date());
+    if (msg) console.error(`${msg.author.username} in ${(msg.guild ? (msg.guild.name + " > " + msg.channel.name) : "DM")}: ${msg.cleanContent}`);
+    console.error((errorStack ? errorStack : "NULL"));
+
+    if (errorStack.length > 1024) errorStack = errorStack.slice(0, 1000);
+    errorInfo.addField("Error", (errorStack ? errorStack : "NULL"));
     errorLog.send(errorInfo);
   },
-  errorLog: errorLog,
-
-  // GENERAL UTILITY
-  clean: function(msg, t = 10000) {
+  botSpam: function(msg) {
+    if (msg.guild) {
+      let botspam = db.server.getSetting(msg.guild, "botspam");
+      if (botspam && (botspam != msg.channel.id)) {
+        msg.reply(`I've placed your results in <#${botspam}> to keep things nice and tidy in here. Hurry before they get cold!`)
+          .then(Utils.clean);
+        return msg.guild.channels.get(botspam);
+      }
+    }
+    return msg.channel;
+  },
+  clean: (msg, t = 15000) => {
     if (msg.deletable) msg.delete(t);
+  },
+  decode: (name, fallback = "Name Error") => {
+    let ename = escape(name);
+    try {
+      name = decodeURIComponent(ename);
+    } catch(e1) {
+      try {
+        let index = ename.lastIndexOf("%");
+        name = decodeURIComponent(ename.substring(0, index) + ename.substring(index + 3));
+      } catch(e2) {
+        name = fallback;
+      }
+    }
+    return name;
+  },
+  embed: () => new Discord.RichEmbed().setColor(config.color).setFooter("Support Gerard development at https://www.patreon.com/gaiwecoor"),
+  errorLog: errorLog,
+  parse: async function(msg) {
+    try {
+      let prefix = await Utils.prefix(msg);
+      let message = msg.content;
+      if (message.startsWith(prefix) && !msg.author.bot) {
+        let parse = message.slice(prefix.length).trim().split(" ");
+        let command = parse.shift().toLowerCase();
+        return {command: command, suffix: parse.join(" ")};
+      } else return null;
+    } catch(e) {
+      Utils.alertError(e, msg);
+      return null;
+    }
+  },
+  prefix: async function(msg) {
+    try {
+      if (msg.guild) return await db.server.getSetting(msg.guild, "prefix");
+      else return config.prefix;
+    } catch(e) {
+      Utils.alertError(e, msg);
+      return config.prefix;
+    }
   },
   userMentions: function(msg) {
     // Useful to ensure the bot isn't included in the mention list,
@@ -37,13 +95,8 @@ module.exports = {
     let bot = msg.client;
     let userMentions = msg.mentions.users;
     if (userMentions.has(bot.user.id)) userMentions.delete(bot.user.id);
-    return userMentions;
-  },
-
-  prefix: function(msg) {
-    if (msg.guild) return db.server.getSetting(msg.guild, "prefix");
-    else return config.prefix;
-  },
-
-  embed: () => new Discord.RichEmbed().setColor(config.color)
+    return (userMentions.size > 0 ? userMentions : null);
+  }
 };
+
+module.exports = Utils;

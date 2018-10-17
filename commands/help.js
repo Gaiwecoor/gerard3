@@ -1,13 +1,15 @@
-const Augur = require("../utils/Augur"),
-  Module = new Augur.Module(),
+const Augur = require("augurbot"),
   u = require("../utils/utils");
 
-Module.addCommand({name: "help",
+const Module = new Augur.Module()
+.addCommand({name: "help",
+  description: "Get a list of available commands or more indepth info about a single command.",
+  syntax: "[command name]",
   aliases: ["commands"],
-  process: (msg, suffix) => {
+  process: async (msg, suffix) => {
     u.clean(msg);
 
-    let prefix = u.prefix(msg);
+    let prefix = await u.prefix(msg);
     let commands = Module.handler.commands.filter(c => c.permissions(msg));
 
     let embed = u.embed()
@@ -26,13 +28,21 @@ Module.addCommand({name: "help",
 
       categories.unshift("General");
 
+      let i = 1;
       categories.forEach(category => {
-        commands.filter(c => c.category == category).sort((a, b) => a.name.localeCompare(b.name)).forEach(command => {
+        commands.filter(c => c.category == category && !c.hidden).sort((a, b) => a.name.localeCompare(b.name)).forEach((command) => {
           embed.addField(prefix + command.name + " " + command.syntax, (command.description ? command.description : "Description"), true);
+          if (i == 20) {
+            msg.author.send({embed: embed});
+            embed = u.embed().setTitle(msg.client.user.username + " Commands" + (msg.guild ? ` in ${msg.guild.name}.` : ".") + " (Cont.)")
+            .setDescription(`You have access to the following commands. For more info, type \`${prefix}help <command>\`.`);
+            i = 0;
+          }
+          i++;
         });
       });
 
-      msg.author.send(embed);
+      msg.author.send({embed: embed});
     } else { // SINGLE COMMAND HELP
       let command = null;
       if (commands.has(suffix)) command = commands.get(suffix);

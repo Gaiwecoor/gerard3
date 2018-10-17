@@ -1,10 +1,28 @@
 {
-  "name": "augur",
-  "version": "1.0.0",
-  "description": "Discord bot framework",
+  "name": "gerard",
+  "version": "3.0.0",
+  "description": "Brawlhalla Discord bot",
   "main": "base.js",
   "dependencies": {
-    "discord.js": "^11.3.2"
+    "augurbot": "^1.1.4",
+    "body-parser": "^1.18.3",
+    "brawlhalla-api": "^4.0.3",
+    "cheerio": "^1.0.0-rc.2",
+    "discord.js": "^11.4.2",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "jwt-simple": "^0.5.5",
+    "markdown": "^0.5.0",
+    "mongoose": "^5.3.1",
+    "opusscript": "0.0.6",
+    "pug": "^2.0.3",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5",
+    "simple-oauth2": "^2.2.1",
+    "steamapi": "^2.0.2",
+    "twitch-api": "^0.5.0",
+    "uws": "^99.0.0",
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {},
   "scripts": {
@@ -12,9 +30,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://bitbucket.org/Gaiwecoor/augur.git"
+    "url": "git+https://bitbucket.org/Gaiwecoor/gerard3.git"
   },
   "author": "Kevin \"Gaiwecoor\" Dixon",
   "license": "MIT",
-  "homepage": "https://bitbucket.org/Gaiwecoor/augur/src/master/README.md"
+  "homepage": "https://bitbucket.org/Gaiwecoor/gerard3/src/master/README.md"
 }

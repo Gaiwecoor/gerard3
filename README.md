@@ -1,16 +1,20 @@
-## Augur - Discord bot framework
+# Gerard - Discord Brawlhalla Bot
 
+For basic bot information, visit [Gerard's Home Page](https://gerard.vorpallongspear.com).
 
+## Contributing
+
+Community contributions to Gerard's code are welcome. Gerard runs in Node and is built on the [Augur Bot Framework](https://www.npmjs.com/package/augurbot).
 
 ---
 
-## Command File Structure
+### Command File Structure
 
 Save your `command.js` file in the `./commands` directory.
 
 The file begins with:
 ```
-const Augur = require("../utils/Augur");
+const Augur = require("augurbot");
 const Module = new Augur.Module();
 ```
 And finish the file with:
@@ -18,9 +22,9 @@ And finish the file with:
 module.exports = Module;
 ```
 
-In between, you can add cone or more commands and event handlers, as well as a clockwork and unload function.
+In between, you can add one or more commands and event handlers, as well as a clockwork and unload function.
 
-### Commands
+#### Commands
 ```
 Module.addCommand({
   name: "commandname", // required
@@ -35,17 +39,17 @@ Module.addCommand({
 });
 ```
 
-### Events
+#### Events
 ```
 Module.addEvent("eventName", (...args) => {});
 ```
 
-### Clockwork
+#### Clockwork
 ```
 Module.addClockwork((bot) => { return setInterval(); });
 ```
 
-### Unload
+#### Unload
 ```
 Module.setUnload((bot) => {});
 ```
