@@ -29,17 +29,18 @@ const Module = new Augur.Module()
   app.set("views", "./site/views");
   app.set("view engine", "pug");
   app.disable("view cache");
-  app.use((req, res, next) => {
-    res.locals.handler = Module.handler;
-    res.locals.bot = Module.handler.client;
-    next();
-  });
   app.use(session({
     secret: config.sessionSecret,
     cookie: { maxAge: 3600000 },
     resave: false,
     saveUninitialized: false
   }));
+  app.use((req, res, next) => {
+    res.locals.handler = Module.handler;
+    res.locals.bot = Module.handler.client;
+    res.locals.loggedIn = (req.session.user || req.session.guilds);
+    next();
+  });
 
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({extended: true}));
