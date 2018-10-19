@@ -41,7 +41,7 @@ Module = new Augur.Module()
 })
 .addCommand({name: "tournaments",
   category: "Tournaments",
-  description: "Find upcoming Brawlhalla tournaments on Smash.gg",
+  description: "Find upcoming Brawlhalla tournaments on [Smash.gg](https://smash.gg/tournaments?per_page=30&filter=%7B%22upcoming%22%3Atrue%2C%22videogameIds%22%3A%2215%22%2C%22past%22%3Afalse%7D&page=1)",
   aliases: ["tourneys", "tournament", "tourney", "bracket", "brackets"],
   process: async (msg) => {
     try {
