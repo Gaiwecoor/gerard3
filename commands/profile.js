@@ -5,44 +5,11 @@ const Module = new Augur.Module()
 .addCommand({name: "claim",
   description: "Claim your Brawlhalla profile",
   category: "Profile",
-  usage: "Brawlhalla ID | Steam ID",
-  info: "Stores your Brawlhalla ID, so you can access rank and stat info without having to type your name.",
-  process: async (msg, id) => {
+  info: "Takes you to your profile page, to store your Steam and Brawlhalla ID, so you can access rank and stat info without having to type your name.",
+  process: async (msg) => {
     try {
-      if (id) {
-        let bh = require("brawlhalla-api")(Module.config.api.bh);
-        let SteamApi = require("steamapi");
-        let steam = new SteamApi(Module.config.api.steam);
-        let claim = Module.db.claim;
-
-        let userIds = { discordId: msg.author.id };
-
-        if (id.startsWith("<") && id.endsWith(">")) id = id.substr(1, id.length-2);
-
-        let steamId = await steam.resolve(id);
-
-        if (steamId) {
-          let profileId = await bh.getBhidBySteamId(steamId);
-          if (profileId && profileId.brawlhalla_id) {
-            userIds.bhid = profileId.brawlhalla_id;
-            userIds.steamId = profileId.steamId;
-          }
-        } else {
-          let stats = await bh.getPlayerStats(id);
-          if (stats && stats.brawlhalla_id) {
-            userIds.bhid = stats.brawlhalla_id;
-          }
-        }
-
-        if (userIds.bhid) {
-          let user = await claim.saveUser(userIds);
-          if (user && user.bhid) msg.channel.send(`Your Brawlhalla ${(user.steamId ? "and Steam IDs have" : "ID has")} been saved!`).then(u.clean);
-          else msg.channel.send("Sorry, I ran into an error and couldn't save your profile.").then(u.clean);
-        } else {
-          msg.channel.send("Sorry, I couldn't find a Brawlhalla account associated with that ID.").then(u.clean);
-        }
-      } else msg.reply("you need to give me a Brawlhalla or Steam ID!").then(u.clean);
-    } catch(e) { Module.handler.errorHandler(e, msg); }
+      u.botSpam(msg).send("Claim your Steam and Brawlhalla accounts here: <" + Module.config.homePage + "profile>");
+    } catch(e) { u.alertError(e, msg); }
   }
 })
 .addCommand({name: "private",
@@ -104,3 +71,41 @@ const Module = new Augur.Module()
 });
 
 module.exports = Module;
+
+/*async function oldClaim(msg, id) {
+  try {
+    if (id) {
+      let bh = require("brawlhalla-api")(Module.config.api.bh);
+      let SteamApi = require("steamapi");
+      let steam = new SteamApi(Module.config.api.steam);
+      let claim = Module.db.claim;
+
+      let userIds = { discordId: msg.author.id };
+
+      if (id.startsWith("<") && id.endsWith(">")) id = id.substr(1, id.length-2);
+
+      let steamId = await steam.resolve(id);
+
+      if (steamId) {
+        let profileId = await bh.getBhidBySteamId(steamId);
+        if (profileId && profileId.brawlhalla_id) {
+          userIds.bhid = profileId.brawlhalla_id;
+          userIds.steamId = profileId.steamId;
+        }
+      } else {
+        let stats = await bh.getPlayerStats(id);
+        if (stats && stats.brawlhalla_id) {
+          userIds.bhid = stats.brawlhalla_id;
+        }
+      }
+
+      if (userIds.bhid) {
+        let user = await claim.saveUser(userIds);
+        if (user && user.bhid) msg.channel.send(`Your Brawlhalla ${(user.steamId ? "and Steam IDs have" : "ID has")} been saved!`).then(u.clean);
+        else msg.channel.send("Sorry, I ran into an error and couldn't save your profile.").then(u.clean);
+      } else {
+        msg.channel.send("Sorry, I couldn't find a Brawlhalla account associated with that ID.").then(u.clean);
+      }
+    } else msg.reply("you need to give me a Brawlhalla or Steam ID!").then(u.clean);
+  } catch(e) { u.alertError(e, msg); }
+}*/

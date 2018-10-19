@@ -11,7 +11,7 @@ function checkStream(Module) {
   let bot = Module.handler.client;
   let twitch = new TwitchApi(Module.config.api.twitch);
 
-  twitch.getChannelStream("brwalhalla", (error, body) => {
+  twitch.getChannelStream("brawlhalla", (error, body) => {
     if (error) u.alertError(error);
     else if (body.stream && (streamStatus.status == "offline")) {
       bot.user.setActivity(
