@@ -47,7 +47,7 @@ const models = {
     },
     saveOptions: (discordId, data) => {
       return new Promise((fulfill, reject) => {
-        let optionalData = ["steamId", "challonge", "public", "twitch"];
+        let optionalData = ["steamId", "challonge", "public", "twitch", "bhid"];
         let params = {};
 
         for (option in data) {
