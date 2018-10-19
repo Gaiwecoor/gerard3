@@ -25,6 +25,10 @@ var	ClaimSchema = new Schema({
 	public: {
 		type: Boolean,
 		default: true
+	},
+	verified: {
+		type: Boolean,
+		default: false
 	}
 });
 
