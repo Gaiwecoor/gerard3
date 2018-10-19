@@ -9,7 +9,7 @@ const Augur = require("augurbot"),
 
 
 const app = new Express(),
-http = require("http").Server(app)
+  http = require("http").Server(app);
 
 const Module = new Augur.Module()
 .addCommand({name: "rs",
