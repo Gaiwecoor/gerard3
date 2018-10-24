@@ -12,7 +12,7 @@ function runCustomCommand(msg) {
         command.response,
         {
           file: {
-            attachment: process.cwd + "/storage/" + command._id,
+            attachment: process.cwd() + "/storage/" + command._id,
             name: command.attachment
           }
         }
@@ -35,7 +35,7 @@ function runCustomCommand(msg) {
 }
 
 const Module = new Augur.Module()
-.addCommand({name: "addcommand",
+.addCommand({name: "customcommand",
   category: "Server Admin",
   syntax: "<Command Name> <Command Response>",
   description: "Adds a custom command for your server.",
