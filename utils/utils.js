@@ -66,9 +66,9 @@ const Utils = {
   },
   embed: () => new Discord.RichEmbed().setColor(config.color).setFooter("Support Gerard development at https://www.patreon.com/gaiwecoor"),
   errorLog: errorLog,
-  parse: async function(msg) {
+  parse: function(msg) {
     try {
-      let prefix = await Utils.prefix(msg);
+      let prefix = Utils.prefix(msg);
       let message = msg.content;
       if (message.startsWith(prefix) && !msg.author.bot) {
         let parse = message.slice(prefix.length).trim().split(" ");
@@ -80,9 +80,9 @@ const Utils = {
       return null;
     }
   },
-  prefix: async function(msg) {
+  prefix: function(msg) {
     try {
-      if (msg.guild) return await db.server.getSetting(msg.guild, "prefix");
+      if (msg.guild) return db.server.getSetting(msg.guild, "prefix");
       else return config.prefix;
     } catch(e) {
       Utils.alertError(e, msg);
