@@ -43,7 +43,6 @@ async function getFullRank(result) {
 
     rank.global_rank = result.rank;
     if (stats.clan && stats.clan.clan_name) rank.clan = stats.clan;
-    rank.name += " ☑️";
     return rank;
   } catch(e) { u.alertError(e); }
 }
@@ -97,7 +96,7 @@ function rankedEmbed(rank, index = 0, count = null) {
 
   let name = `**${u.decode(rank.name)}**` + (rank.clan ? `\n< [${u.decode(rank.clan.clan_name)}](https://brawldb.com/clan/info/${rank.clan.clan_id}) >` : "");
 
-  embed.setTitle(`Ranked Data for ${u.decode(rank.name)}`)
+  embed.setTitle(`${(rank.verified ? "☑️ Verified " : "")}Ranked Data for ${u.decode(rank.name)}`)
     .addField("Name", name, true)
     .addField("Region", rank.region, true)
     .addField("Legends", `Highest Rating: ${bh.legendSummaries.get(bestLegend.legend_id).bio_name}\nMost Played: ${bh.legendSummaries.get(rank.legends[0].legend_id).bio_name}`, true);
@@ -204,7 +203,7 @@ function statEmbed(stats) {
   }
 
   let embed = u.embed()
-  .setTitle(`Brawlhalla Stats for ${u.decode(stats.name)}`)
+  .setTitle(`${(stats.verified ? "☑️ Verified " : "")}Brawlhalla Stats for ${u.decode(stats.name)}`)
   .addField("Name", `**${u.decode(stats.name)}**` + (stats.clan ? (`\n< [${u.decode(stats.clan.clan_name)}](https://brawldb.com/clan/info/${stats.clan.clan_id}) >`) : ""), true)
   .addField("Overall", [
     `${stats.wins} Wins / ${stats.games - stats.wins} Losses (${stats.games} Games)`,
@@ -298,11 +297,11 @@ const Module = new Augur.Module()
             if (leaderrank) rank.global_rank = leaderrank.rank;
             if (stats.clan && stats.clan.clan_name) rank.clan = stats.clan;
 
-            if (user.verified) rank.name += " ☑️";
+            if (user.verified) rank.verified = true;
             embed = rankedEmbed(rank);
           } else {
             // User is currently unranked.
-            if (user.verified) stats.name += " ☑️";
+            if (user.verified) stats.verified = true;
             embed = statEmbed(stats)
             .setDescription("This player is currently unranked.\n\nBrawlhalla stats since September 2016.");
           }
@@ -377,11 +376,9 @@ const Module = new Augur.Module()
           if (leaderrank) rank.global_rank = leaderrank.rank;
           if (stats.clan && stats.clan.clan_name) rank.clan = stats.clan;
 
-          rank.name += " ☑️";
           embed = rankedEmbed(rank);
         } else {
           // User is currently unranked.
-          stats.name += " ☑️";
           embed = statEmbed(stats)
           .setDescription("This player is currently unranked.\n\nBrawlhalla stats since September 2016.");
         }
@@ -416,7 +413,7 @@ const Module = new Augur.Module()
         let user = await claim.getUser(target.id);
         if (user && user.bhid && ((user.discordId == msg.author.id) || user.public)) {
           let stats = await bh.getPlayerStats(user.bhid);
-          stats.name += " ☑️";
+          if (user.verified) stats.verified = true;
           embed = statEmbed(stats)
           .setDescription("Brawlhalla stats since September 2016.");
         } else if (user && user.bhid) {
@@ -434,7 +431,6 @@ const Module = new Augur.Module()
           try {
             let stats = await bh.getPlayerStats(bhid);
             if (stats.brawlhalla_id) {
-              stats.name += " ☑️";
               embed = statEmbed(stats).setDescription("Brawlhalla Stats since September 2016");
             } else
               msg.reply("I couldn't find any stats for that Brawlhalla ID.").then(u.clean);
