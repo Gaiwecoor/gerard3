@@ -87,9 +87,11 @@ const models = {
           function (err, cmd) {
             if (err) reject(err);
             else {
-              if (cmd.attachment)
+              if (cmd.attachment) {
+                let fs = require("fs");
                 request(data.url).pipe(fs.createWriteStream(process.cwd() + "/storage/" + cmd._id));
-              fulfill()
+              }
+              fulfill(cmd);
             }
           }
         );
@@ -104,13 +106,15 @@ const models = {
       });
     },
     removeCommand: (guild, command) => {
-      Command.findOneAndRemove(
-        {serverId: guild.id, command: command},
-        function(err, cmd) {
-          if (err) reject(err);
-          else fulfill(cmd);
-        }
-      );
+      return new Promise((fulfill, reject) => {
+        Command.findOneAndRemove(
+          {serverId: guild.id, command: command},
+          function(err, cmd) {
+            if (err) reject(err);
+            else fulfill(cmd);
+          }
+        );
+      });
     }
   },
   leaderboards: {
