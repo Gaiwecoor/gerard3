@@ -1,6 +1,7 @@
-node_modules
 config
-!config/*-example.json
 data
-*-.js
+node_modules
 site
+storage
+*-.js
+!config/*-example.json
