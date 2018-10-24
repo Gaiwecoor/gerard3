@@ -1,21 +1,35 @@
 const Augur = require("augurbot"),
-  request = require("request"),
+  cheerio = require("cheerio"),
   parseXML = require("xml2js").parseString,
+  request = require("request-promise-native"),
   u = require("../utils/utils");
 
-function fetchFeed(msg, type = "patch-notes") {
-  request(`http://www.brawlhalla.com/news/category/${type}/feed/`, function(error, response, body) {
-    if (!error && response.statusCode == 200) {
-      parseXML(body, function(err, xml) {
-        if (!err && xml && xml.rss && xml.rss.channel && xml.rss.channel[0].item) {
-          let item = xml.rss.channel[0].item[0];
-          let date = new Date(item.pubDate);
-          msg.channel.send(`**${date.toLocaleDateString("en-US")}: ${item.title}**\n${item.link}`);
-        } else msg.channel.send("Sorry, I ran into a problem getting the latest post from the Brawlhalla Website.").then(u.clean);
+async function fetchFeed(msg, type = "patch-notes") {
+  try {
+    let body = await request(`http://www.brawlhalla.com/news/category/${type}/feed/`);
+      parseXML(body, async function(err, xml) {
+          if (!err && xml && xml.rss && xml.rss.channel && xml.rss.channel[0].item) {
+            try {
+              let item = xml.rss.channel[0].item[0];
+              let date = new Date(item.pubDate);
+              let html = await request(item.link[0]);
+              let $ = cheerio.load(html);
+
+              let embed = u.embed()
+              .setTitle($('meta[property="og:title"]').attr("content"))
+              .setDescription($('meta[property="og:description"]').attr("content") + ` [[Read More]](${item.link[0]})`)
+              .setTimestamp(date.toLocaleDateString())
+              .setURL(item.link[0])
+              .setThumbnail($('meta[property="og:image"]').attr("content"));
+
+              msg.channel.send(embed);
+            } catch(e) { u.alertError(e, msg); }
+          } else msg.channel.send("Sorry, I ran into a problem getting the latest post from the Brawlhalla Website.").then(u.clean);
       });
-    } else msg.channel.send("Sorry, I ran into a problem getting the latest post from the Brawlhalla website.").then(u.clean);
-  });
+  } catch(e) { u.alertError(e, msg); }
 }
+
+
 
 const Module = new Augur.Module()
 .addCommand({name: "community",
