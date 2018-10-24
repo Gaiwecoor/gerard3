@@ -18,7 +18,8 @@ const Module = new Augur.Module()
     if (!suffix) { // FULL HELP
       embed
       .setTitle(msg.client.user.username + " Commands" + (msg.guild ? ` in ${msg.guild.name}.` : "."))
-      .setDescription(`You have access to the following commands. For more info, type \`${prefix}help <command>\`.`);
+      .setDescription(`You have access to the following commands. For more info, type \`${prefix}help <command>\`.`)
+      .setURL(Module.config.homePage + "commands");
 
       let categories = commands
       .filter(c => !c.hidden && c.category != "General")
@@ -34,7 +35,9 @@ const Module = new Augur.Module()
           embed.addField(prefix + command.name + " " + command.syntax, (command.description ? command.description : "Description"), true);
           if (i == 20) {
             msg.author.send({embed: embed});
-            embed = u.embed().setTitle(msg.client.user.username + " Commands" + (msg.guild ? ` in ${msg.guild.name}.` : ".") + " (Cont.)")
+            embed = u.embed()
+            .setTitle(msg.client.user.username + " Commands" + (msg.guild ? ` in ${msg.guild.name}.` : ".") + " (Cont.)")
+            .setURL(Module.config.homePage + "commands")
             .setDescription(`You have access to the following commands. For more info, type \`${prefix}help <command>\`.`);
             i = 0;
           }
