@@ -4,39 +4,82 @@ const Augur = require("augurbot"),
   request = require("request-promise-native"),
   u = require("../utils/utils");
 
-async function fetchFeed(msg, type = "patch-notes") {
+async function announce(handler, item) {
   try {
-    let body = await request(`http://www.brawlhalla.com/news/category/${type}/feed/`);
-      parseXML(body, async function(err, xml) {
-          if (!err && xml && xml.rss && xml.rss.channel && xml.rss.channel[0].item) {
-            try {
-              let item = xml.rss.channel[0].item[0];
-              let date = new Date(item.pubDate);
-              let html = await request(item.link[0]);
-              let $ = cheerio.load(html);
+    let embed = await feedEmbed(item);
+    let servers = await handler.db.server.announceChannels();
+    let channels = servers
+    .filter(s => handler.client.channels.has(s.announce))
+    .map(s => handler.client.channels.get(s.announce));
 
-              let embed = u.embed()
-              .setTitle($('meta[property="og:title"]').attr("content"))
-              .setDescription($('meta[property="og:description"]').attr("content") + ` [[Read More]](${item.link[0]})`)
-              .setTimestamp(date.toLocaleDateString())
-              .setURL(item.link[0])
-              .setThumbnail($('meta[property="og:image"]').attr("content"));
-
-              msg.channel.send(embed);
-            } catch(e) { u.alertError(e, msg); }
-          } else msg.channel.send("Sorry, I ran into a problem getting the latest post from the Brawlhalla Website.").then(u.clean);
-      });
-  } catch(e) { u.alertError(e, msg); }
+    channels.forEach(c => c.send(embed));
+  } catch(e) { u.alertError(e); }
 }
 
+async function checkNews(handler) {
+  try {
+    let fs = require("fs");
+    let file = process.cwd() + "/data/news.json";
+    let oldNews = fs.readFileSync(file, "utf-8");
+    oldNews = JSON.parse(oldNews);
 
+    let item = await fetchFeed();
+    let itemId = item.guid[0]._.substr(item.guid[0]._.indexOf("p=") + 2);
+    if (!oldNews.includes(itemId)) {
+      oldNews.push(itemId);
+      await announce(handler, item);
+      if (!handler.client.shard || handler.client.shard.id == 0)
+      fs.writeFileSync(file, JSON.stringify(oldNews));
+    }
+  } catch(e) { u.alertError(e); }
+}
+
+async function feedEmbed(item) {
+  let date = new Date(item.pubDate);
+  let html = await request(item.link[0]);
+  let $ = cheerio.load(html);
+
+  let content = $('meta[property="og:description"]').attr("content");
+  let img = $('meta[property="og:image"]');
+
+  let embed = u.embed()
+  .setTitle($('meta[property="og:title"]').attr("content"))
+  .setDescription((content ? `${content} ` : "") + `[[Read More]](${item.link[0]})`)
+  .setTimestamp(date)
+  .setURL(item.link[0]);
+  if (img) embed.setThumbnail($('meta[property="og:image"]').attr("content"));
+
+  return embed;
+}
+
+function fetchFeed(type = null) {
+  return new Promise(async (fulfill, reject) => {
+    try {
+      let body = await request(`http://www.brawlhalla.com/${(type ? `news/category/${type}/` : "")}feed/`);
+      parseXML(body, async function(err, xml) {
+        if (!err && xml && xml.rss && xml.rss.channel && xml.rss.channel[0].item) {
+          try {
+            let item = xml.rss.channel[0].item[0];
+            fulfill(item);
+          } catch(e) { reject(e); }
+        } else reject(err);
+      });
+    } catch(e) { reject(e); }
+  });
+}
 
 const Module = new Augur.Module()
 .addCommand({name: "community",
   category: "Brawlhalla Info",
   description: "Get the latest Community Roundup.",
   aliases: ["art", "communityroundup", "communitycontent", "roundup"],
-  process: (msg) => fetchFeed(msg, "community")
+  process: async (msg) => {
+    try {
+      let item = await fetchFeed("community");
+      let embed = await feedEmbed(item);
+      msg.channel.send(embed);
+    } catch(e) { u.alertError(e, msg); }
+  }
 })
 .addCommand({name: "legend",
   category: "Brawlhalla Info",
@@ -69,7 +112,7 @@ const Module = new Augur.Module()
           let channel = u.botSpam(msg);
 
           channel.send(embed).catch(e => {
-            if (msg.guild && !channel.permissionsFor(bot.user).has("EMBED_LINKS")) {
+            if (msg.guild && !channel.permissionsFor(msg.client.user).has("EMBED_LINKS")) {
               channel.send(msg.author + ", my system requires `Embed Links` permissions for me to work properly, and it looks like I don't have those. Try talking to the server owner to make sure I have the permissions I need.");
             } else u.alertError(e, msg);
           });
@@ -82,7 +125,11 @@ const Module = new Augur.Module()
   category: "Brawlhalla Info",
   description: "Get the latest patch notes.",
   aliases: ["patch", "notes"],
-  process: (msg) => fetchFeed(msg, "patch-notes")
+  process: async (msg) => {
+    let item = await fetchFeed("patch-notes");
+    let embed = await feedEmbed(item);
+    msg.channel.send(embed);
+  }
 })
 .addCommand({name: "pingtest",
   category: "Brawlhalla Info",
@@ -115,7 +162,7 @@ const Module = new Augur.Module()
     let channel = u.botSpam(msg);
 
     channel.send(embed).catch(e => {
-			if (msg.guild && !channel.permissionsFor(bot.user).has("EMBED_LINKS")) {
+			if (msg.guild && !channel.permissionsFor(msg.client.user).has("EMBED_LINKS")) {
 				channel.send(msg.author + ", my system requires `Embed Links` permissions for me to work properly, and it looks like I don't have those. Try talking to the server owner to make sure I have the permissions I need.");
 			} else u.alertError(e, msg);
 		});
@@ -141,14 +188,15 @@ const Module = new Augur.Module()
 
     let channel = u.botSpam(msg);
 		channel.send(embed).catch(e => {
-			if (msg.guild && !channel.permissionsFor(bot.user).has("EMBED_LINKS")) {
+			if (msg.guild && !channel.permissionsFor(msg.client.user).has("EMBED_LINKS")) {
 				channel.send(msg.author + ", my system requires `Embed Links` permissions for me to work properly, and it looks like I don't have those. Try talking to the server owner to make sure I have the permissions I need.");
 			} else u.alertError(e, msg);
 		});
   }
 })
-.setInit(() => {
-  let bh = require("brawlhalla-api")(Module.config.api.bh);
+.setClockwork(() => {
+  checkNews(Module.handler);
+  return setInterval(checkNews, 3600000, Module.handler);
 });
 
 module.exports = Module;

@@ -202,6 +202,14 @@ const models = {
 				);
 			});
     },
+    announceChannels: () => {
+      return new Promise((fulfill, reject) => {
+        Server.find({announce: {$ne: null}}, (err, servers) => {
+          if (err) reject(err);
+          else fulfill(servers);
+        });
+      });
+    },
     getSetting: (guild, setting) => {
       if (serverSettings.has(guild.id))
         return serverSettings.get(guild.id)[setting];
