@@ -89,7 +89,7 @@ function rankedEmbed(rank, index = 0, count = null) {
   for (var x in rankInfo) {
     if (rank.tier.toLowerCase().startsWith(x)) {
       embed.setColor(rankInfo[x].color)
-      .setThumbnail(`${config.imgPath}/ranked/${rankInfo[x].image}.png?API_KEY=${config.api.claim}`);
+      .setThumbnail(`${config.imgPath}/ranked/${rankInfo[x].image}.png?API_KEY=${config.api.resource}`);
       break;
     }
   }

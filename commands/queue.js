@@ -18,7 +18,7 @@ function checkBoard(msg, region, board = "1v1") {
     let embed = u.embed()
   		.setTitle("Ranked Queue")
   		.setDescription(`The following Top ${pages * 50} ${region.toUpperCase()} players have played in the ${board} queue within the last ${queueTime} minutes.`)
-  		.setThumbnail(Module.config.imgPath + "/weapons/spawn.png?API_KEY=" + Module.config.api.claim);
+  		.setThumbnail(Module.config.imgPath + "/weapons/spawn.png?API_KEY=" + Module.config.api.resource);
 
 		Module.db.leaderboards.fetchQueue(region, board, queueTime)
 		.then(records => {

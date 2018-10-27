@@ -11,7 +11,7 @@ Module = new Augur.Module()
       let embed = u.embed()
         .setTitle("Upcoming Official Brawlhalla Tournaments")
         .setDescription("Official Brawlhalla Tournaments on [Smash.gg](https://smash.gg/brawlhalla)")
-        .setThumbnail(Module.config.imgPath + "/weapons/spawn.png?API_KEY=" + Module.config.api.claim);
+        .setThumbnail(Module.config.imgPath + "/weapons/spawn.png?API_KEY=" + Module.config.api.resource);
 
       let circuit = await smash.tournament("brawlhalla", ["visibleEntityContainerTag"]);
       let slugTest = /tournament\/(\w+(-\w+)*)\/event/;
@@ -48,7 +48,7 @@ Module = new Augur.Module()
       let embed = u.embed()
         .setTitle("Upcoming Brawlhalla Tournaments")
         .setDescription("See all official Brawlhalla tournaments on [Smash.gg](https://smash.gg/brawlhalla)")
-        .setThumbnail(Module.config.imgPath + "/weapons/span.png?API_KEY=" + Module.config.api.claim)
+        .setThumbnail(Module.config.imgPath + "/weapons/spawn.png?API_KEY=" + Module.config.api.resource)
         .setTimestamp();
 
       let date = Math.floor((Date.now() + (4 * 7 * 24 * 60 * 60 * 1000)) / 1000);

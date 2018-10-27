@@ -110,7 +110,7 @@ const Module = new Augur.Module()
             .setAuthor("Brawlhalla Lore")
             .setTitle(legend.bio_name)
             .setDescription(`*${legend.bio_aka}*\n\n${quotes}`)
-            .setThumbnail(`${Module.config.imgPath}/legends/${slug}.png?API_KEY=${Module.config.api.claim}`)
+            .setThumbnail(`${Module.config.imgPath}/legends/${slug}.png?API_KEY=${Module.config.api.resource}`)
             .addField("Weapons", legend.weapon_one + "\n" + legend.weapon_two, true)
             .addField("Stats", `**Str:** ${legend.strength}\n**Dex:** ${legend.dexterity}\n**Def:** ${legend.defense}\n**Spd:** ${legend.speed}`, true);
 

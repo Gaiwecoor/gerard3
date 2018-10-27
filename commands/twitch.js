@@ -98,7 +98,7 @@ const Module = new Augur.Module()
       else {
         let embed = u.embed()
           .setTitle("Live Brawlhalla Streams")
-          .setThumbnail(Module.config.imgPath + "/weapons/horn.png?API_KEY=" + Module.config.api.claim)
+          .setThumbnail(Module.config.imgPath + "/weapons/horn.png?API_KEY=" + Module.config.api.resource)
           .setColor("#6441A4")
           .setTimestamp()
           .setDescription("Top five live Brawlhalla streams:");
