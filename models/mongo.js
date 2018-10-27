@@ -12,6 +12,17 @@ mongoose.connect(config.db.db, config.db.auth);
 
 const models = {
   claim: {
+    getTwitch: (channel) => {
+      return new Promise((fulfill, reject) => {
+        Claim.find(
+          {twitch: channel},
+          function(error, users) {
+            if (error) reject(error);
+            else fulfill(users);
+          }
+        );
+      });
+    },
     getUser: (discordId) => {
       return new Promise((fulfill, reject) => {
         Claim.findOne(
