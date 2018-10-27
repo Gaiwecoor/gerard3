@@ -14,7 +14,10 @@ function loadCommands(Handler) {
 
 const Handler = new Augur.Handler(config, {
   errorHandler: u.alertError,
-  parse: u.parse
+  parse: u.parse,
+  clientOptions: {
+    disableEveryone: true
+  }
 });
 
 Handler.start().then(loadCommands);
