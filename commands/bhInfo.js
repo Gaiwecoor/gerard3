@@ -68,6 +68,11 @@ function fetchFeed(type = null) {
   });
 }
 
+function updateLegends(key) {
+  let bhApi = require("brawlhalla-api")(key);
+  bhApi.updateLegends();
+}
+
 const Module = new Augur.Module()
 .addCommand({name: "community",
   category: "Brawlhalla Info",
@@ -193,6 +198,15 @@ const Module = new Augur.Module()
 			} else u.alertError(e, msg);
 		});
   }
+})
+.addCommand({name: "updatelegends",
+  category: "Bot Admin", hidden: true,
+  description: "Reload legend information from the API.",
+  process: (msg) => {
+    if (!msg.client.shard) updateLegends(Module.config.api.bh);
+    else msg.client.shard.broadcastEval(`(${updateLegends})("${Module.config.api.bh}")`);
+  },
+  permissions: (msg) => Module.config.adminId.includes(msg.author.id)
 })
 .setClockwork(() => {
   checkNews(Module.handler);
