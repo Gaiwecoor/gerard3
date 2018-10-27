@@ -11,6 +11,7 @@
     "discord.js": "^11.4.2",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
+    "html-entities": "^1.2.1",
     "jwt-simple": "^0.5.5",
     "markdown": "^0.5.0",
     "mongoose": "^5.3.1",
