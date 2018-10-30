@@ -213,7 +213,7 @@ function statEmbed(stats) {
     "**Most Used:** " + (response.legend.time ? response.legend.time.name : "None"),
     "**Highest Winrate:** " + (response.legend.wr ? `${response.legend.wr.name} (${response.legend.wr.value}%)` : "None"),
     "**Highest Avg DPS:** " + (response.legend.dps ? `${response.legend.dps.name} (${response.legend.dps.value})` : "None"),
-    "**Shortes Avg TTK:** " + (response.legend.ttk ? `${response.legend.ttk.name} (${response.legend.ttk.value}s)` : "None")
+    "**Shortest Avg TTK:** " + (response.legend.ttk ? `${response.legend.ttk.name} (${response.legend.ttk.value}s)` : "None")
   ].join("\n"), true)
   .addField("Weapons (20 game minimum)", [
     "**Most Used:** " + (response.weapon.time ? response.weapon.time.name : "None"),
