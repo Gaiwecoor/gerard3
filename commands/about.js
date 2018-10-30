@@ -7,13 +7,13 @@ const Module = new Augur.Module()
   category: "Bot Info",
   process: (msg) => {
   	let embed = u.embed()
-  		.setURL(config.helpPage)
+  		.setURL(Module.config.helpPage)
   		.setThumbnail(msg.client.user.displayAvatarURL)
   		.setTitle(msg.client.user.username + ": A Brawlhalla Utility Bot")
   		.addField("Author", "[@Gaiwecoor](https://twitter.com/gaiwecoor)", true)
-  		.addField("Help Page", `[${msg.client.user.username} About Page](${config.helpPage})`, true)
-  		.addField("Home Server", `[VLS Bot Support](${config.homeServer})`, true)
-  		.addField("Invite Link", `[Bring ${msg.client.user.username} to your server](${config.inviteLink})`, true)
+  		.addField("Help Page", `[${msg.client.user.username} About Page](${Module.config.helpPage})`, true)
+  		.addField("Home Server", `[VLS Bot Support](${Module.config.homeServer})`, true)
+  		.addField("Invite Link", `[Bring ${msg.client.user.username} to your server](${Module.config.inviteLink})`, true)
   		.addField("Patreon", "[Patreon](https://www.patreon.com/gaiwecoor)");
 
   	msg.channel.send(embed).catch(e => {
@@ -26,13 +26,13 @@ const Module = new Augur.Module()
 .addCommand({name: "botserver",
   description: "Get a link to the bot's support server.",
   category: "Bot Info",
-  process: (msg) => msg.channel.send(`🏠 Here's an invite to my support server:\n<${config.homeServer}>`)
+  process: (msg) => msg.channel.send(`🏠 Here's an invite to my support server:\n<${Module.config.homeServer}>`)
 })
 .addCommand({name: "invite",
   description: "Get my invite link",
   category: "Bot Info",
   aliases: ["join"],
-  process: (msg) => msg.channel.send(`Use this to bring me to your server:\n<${config.inviteLink}>`)
+  process: (msg) => msg.channel.send(`Use this to bring me to your server:\n<${Module.config.inviteLink}>`)
 })
 .addCommand({name: "donate",
   description: "Help power Gerard's maintenance and development",
