@@ -6,13 +6,14 @@ const Augur = require("augurbot"),
   time = 900000;
 
 async function awaitNav(msg) {
-  if (msg.channel && (((msg.channel.type == "text") && msg.channel.permissionsFor(msg.client.user).has("ADD_REACTIONS")) || (msg.channel.tyle == "dm"))) {
     try {
-      let { results, index, user, cache } = rankedResults.get(msg.id);
-      let nav = ["◀", "▶"];
+      if (msg.channel && (((msg.channel.type == "text") && msg.channel.permissionsFor(msg.client.user).has("ADD_REACTIONS")) || (msg.channel.tyle == "dm"))) {
+        let { results, index, user, cache } = rankedResults.get(msg.id);
+        let nav = ["◀", "▶"];
 
-      await msg.react(nav[0]);
-      await msg.react(nav[1]);
+        await msg.react(nav[0]);
+        await msg.react(nav[1]);
+      }
 
       let reactions = await msg.awaitReactions(
         (reaction, u) => u.id == user && nav.includes(reaction.emoji.name),
@@ -35,7 +36,6 @@ async function awaitNav(msg) {
       msg.channel.send(msg.author + ", my system requires `Add Reactions` permissions for me to function properly and it looks like I don't have those. Try talking to the server owner to make sure I have the permissions I need.");
       else u.alertError(e);
     }
-  }
 }
 
 async function getFullRank(result) {
