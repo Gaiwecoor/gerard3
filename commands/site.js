@@ -26,7 +26,7 @@ const Module = new Augur.Module()
   permissions: (msg) => Module.config.adminId.includes(msg.author.id)
 })
 .setInit(() => {
-  if (!Module.handler.client.shard || Module.handler.client.shard == 0) {
+  if (!Module.handler.client.shard || Module.handler.client.shard.id == 0) {
     app.set("views", "./site/views");
     app.set("view engine", "pug");
     app.disable("view cache");
@@ -70,7 +70,7 @@ const Module = new Augur.Module()
   }
 })
 .setUnload(() => {
-  if (!Module.handler.client.shard || Module.handler.client.shard == 0) {
+  if (!Module.handler.client.shard || Module.handler.client.shard.id == 0) {
     http.close();
 
     let routerPath = path.resolve(process.cwd(), "./site/private");
