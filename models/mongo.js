@@ -282,8 +282,10 @@ const models = {
     },
     saveSettings: (guild, settings) => {
       return new Promise((fulfill, reject) => {
-        for (setting in settings) {
-          serverSettings.get(guild.id)[setting] = settings[setting];
+        if (serverSettings.has(guild.id)) {
+          for (setting in settings) {
+            serverSettings.get(guild.id)[setting] = settings[setting];
+          }
         }
         Server.findOneAndUpdate(
           {serverId: guild.id},
