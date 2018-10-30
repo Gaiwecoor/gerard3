@@ -7,10 +7,10 @@ const Augur = require("augurbot"),
 
 async function awaitNav(msg) {
     try {
-      if (msg.channel && (((msg.channel.type == "text") && msg.channel.permissionsFor(msg.client.user).has("ADD_REACTIONS")) || (msg.channel.tyle == "dm"))) {
-        let { results, index, user, cache } = rankedResults.get(msg.id);
-        let nav = ["◀", "▶"];
+      let { results, index, user, cache } = rankedResults.get(msg.id);
+      let nav = ["◀", "▶"];
 
+      if (msg.channel && (((msg.channel.type == "text") && msg.channel.permissionsFor(msg.client.user).has("ADD_REACTIONS")) || (msg.channel.tyle == "dm"))) {
         await msg.react(nav[0]);
         await msg.react(nav[1]);
       }
