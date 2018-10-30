@@ -333,7 +333,7 @@ const Module = new Augur.Module()
           let channel = u.botSpam(msg);
           try {
             let m = await channel.send(rankedEmbed(rank, 0, results.length));
-            if (results.length > 0) {
+            if (results.length > 1) {
               rankedResults.set(m.id, {
                 results: results,
                 index: 0,
