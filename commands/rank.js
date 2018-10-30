@@ -343,7 +343,7 @@ const Module = new Augur.Module()
               awaitNav(m);
             }
           } catch(e) {
-            if (channel.guild && !channel.permissionsFor(msg.client.user).has(["EMBED_LINKS", "ADD_REACTIONS"]))
+            if (channel && channel.guild && !channel.permissionsFor(msg.client.user).has(["EMBED_LINKS", "ADD_REACTIONS"]))
               channel.send(msg.author + ", my system requires `Embed Links` and `Add Reactions` permissions for me to function properly and it looks like I don't have those. Try talking to the server owner to make sure I have the permissions I need.");
             else u.alertError(e, msg);
           }
