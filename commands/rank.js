@@ -124,8 +124,8 @@ function rankedEmbed(rank, index = 0, count = null) {
     rank.team.winrate = ((rank.team.games > 0) ? (100 * rank.team.wins / rank.team.games).toFixed(1) : 0);
 
     try {
-      embed.addField("2v2 Team", u.decode(rank.team.teamname), true)
-      .addField("Team Rating", `**${rank.team.tier}** (${rank.team.rating} / ${rank.team.peak_rating} Peak)\n${rank.team.wins} Wins / ${rank.team.loss} Losses (${rank.team.games} Games)\n${rank.team.winrate}% Winrate`, true);
+      embed
+      .addField("2v2 Team Rating", `**${u.decode(rank.team.teamname)}**\n**${rank.team.tier}** (${rank.team.rating} / ${rank.team.peak_rating} Peak)\n${rank.team.wins} Wins / ${rank.team.loss} Losses (${rank.team.games} Games)\n${rank.team.winrate}% Winrate`, true);
     } catch(e) { console.error(e); }
   }
 
