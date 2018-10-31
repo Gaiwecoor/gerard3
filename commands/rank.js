@@ -22,7 +22,8 @@ async function awaitNav(msg) {
 
       if (reactions.size == 0) {
         // Timeout. Clear reaction seeds.
-        nav.forEach(n => msg.reactions.get(n).remove(msg.client.user.id));
+        if (((msg.channel.type == "text") && msg.channel.permissionsFor(msg.client.user).has("ADD_REACTIONS")) || (msg.channel.tyle == "dm"))
+          nav.forEach(n => msg.reactions.get(n).remove(msg.client.user.id));
       } else {
         // Navigate and update.
         index += (2 * nav.indexOf(reactions.first().emoji.name) - 1);
