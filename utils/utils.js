@@ -7,7 +7,7 @@ const Discord = require("discord.js"),
 
 const Utils = {
   alertError: function(error, msg = null) {
-    if (!error) return;
+    if (!error || error.name == "DiscordAPIError") return;
 
     let errorInfo = new Discord.RichEmbed()
     .setTimestamp()
