@@ -20,7 +20,7 @@ const Module = new Augur.Module()
   info: "Sets your privacy status on whether other users can mention your account to get your information.",
   process: async (msg, suffix) => {
     try {
-      let state = ((suffix.toLowerCase() == "off") ? "true" : "false");
+      let state = (((suffix.toLowerCase() == "off") || (suffix.toLowerCase() == "false")) ? "true" : "false");
 
       let user = await Module.db.claim.saveOptions(msg.author.id, {public: state});
       msg.channel.send("Your privacy setting has been set to: " + (!user.public)).then(u.clean);
