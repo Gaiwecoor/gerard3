@@ -6,6 +6,7 @@ const Augur = require("augurbot"),
 
 function loadCommands(Handler) {
   Handler.db.init(Handler.client);
+  u.setHandler(Handler);
   Handler.client.on("ready", () => console.log("Ready at:", Date()));
   fs.readdirSync("./commands").filter(c => c.endsWith(".js")).forEach(command => {
     Handler.register(path.resolve(process.cwd(), "./commands/", command));

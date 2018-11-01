@@ -66,6 +66,7 @@ const Utils = {
   },
   embed: () => new Discord.RichEmbed().setColor(config.color).setFooter("Support Gerard development at https://www.patreon.com/gaiwecoor"),
   errorLog: errorLog,
+  handler: null,
   parse: function(msg) {
     try {
       let prefix = Utils.prefix(msg);
@@ -89,6 +90,7 @@ const Utils = {
       return config.prefix;
     }
   },
+  setHandler: (handler) => Utils.handler = handler,
   userMentions: function(msg) {
     // Useful to ensure the bot isn't included in the mention list,
     // such as when the bot mention is the command prefix
