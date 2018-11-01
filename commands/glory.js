@@ -43,25 +43,22 @@ const Module = new Augur.Module()
 		try {
 			let userMentions = u.userMentions(msg);
       let target = (userMentions ? userMentions.first() : msg.author);
-			console.log(target.username);
-      // Get by mention
-      let embed = null;
-      let claim = Module.db.claim;
-      let user = await claim.getUser(target.id);
+
+      let user = await Module.db.claim.getUser(target.id);
       if (user && user.bhid && ((user.discordId == msg.author.id) || user.public)) {
 				let rank = await bh.getPlayerRanked(user.bhid);
 
 				if (rank) {
 					let wins = rank.wins;
 					let games = rank.games;
-					console.log({wins, games});
+
 					if (rank["2v2"] && (rank["2v2"].length > 0)) {
 						rank["2v2"].forEach(r => {
 							wins += r.wins;
 							games += r.games;
 						});
 					}
-					console.log({wins, games});
+					
 					if (games >= 10) {
 						rank.name = u.decode(rank.name);
 						let best = bestRating(rank);
