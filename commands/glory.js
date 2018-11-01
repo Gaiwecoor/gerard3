@@ -46,6 +46,7 @@ const Module = new Augur.Module()
 
       let user = await Module.db.claim.getUser(target.id);
       if (user && user.bhid && ((user.discordId == msg.author.id) || user.public)) {
+				let bh = require("brawlhalla-api")(Module.config.api.bh);
 				let rank = await bh.getPlayerRanked(user.bhid);
 
 				if (rank) {
@@ -58,7 +59,7 @@ const Module = new Augur.Module()
 							games += r.games;
 						});
 					}
-					
+
 					if (games >= 10) {
 						rank.name = u.decode(rank.name);
 						let best = bestRating(rank);
