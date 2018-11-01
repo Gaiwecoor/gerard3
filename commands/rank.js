@@ -120,7 +120,7 @@ function rankedEmbed(rank, index = 0, count = null) {
   }
 
   embed.addField("__Ranked Play__", "\u200B")
-  .addField("1v1 Rating", `**${rank.tier}** (${rank.rating} / ${rank.peak_rating} Peak)\n${rank.winrate}% Winrate` + (rank.global_rank ? `\n**Global Rank** ${rank.global_rank}` : "") + (rank.region_rank ? `\n**${rank.region} Rank** ${rank.region_rank}` : ""), true);
+  .addField("1v1 Rating", `**${rank.tier}** (${rank.rating} / ${rank.peak_rating} Peak)\n${rank.wins} Wins / ${rank.loss} Losses (${rank.games} Games)\n${rank.winrate}% Winrate` + (rank.global_rank ? `\n**Global Rank** ${rank.global_rank}` : "") + (rank.region_rank ? `\n**${rank.region} Rank** ${rank.region_rank}` : ""), true);
 
   if (rank.team) {
     rank.team.loss = rank.team.games - rank.team.wins;
