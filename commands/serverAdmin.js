@@ -9,11 +9,13 @@ const Module = new Augur.Module()
   category: "Server Admin",
   process: async (msg) => {
     try {
-      await msg.author.send(`Manage Gerard settings for your server here: <${Module.config.homePage}manage/${msg.guild.id}>`);
-      msg.channel.send("I sent you a link to your server management page.").then(u.clean);
+      if (msg.guild) {
+        await msg.author.send(`Manage Gerard settings for your server here: <${Module.config.homePage}manage/${msg.guild.id}>`);
+        msg.channel.send("I sent you a link to your server management page.").then(u.clean);
+      } else msg.channel.send(`Manage Gerard settings for your server(s) here: <${Module.config.homePage}manage>`);
     } catch(e) { u.alertError(e, msg); }
   },
-  permissions: (msg) => (msg.guild && (msg.member.permissions.has('MANAGE_GUILD') || msg.member.permissions.has('ADMINISTRATOR') || Module.config.adminId.includes(msg.author.id)))
+  permissions: (msg) => (!msg.guild || (msg.guild && (msg.member.permissions.has('MANAGE_GUILD') || msg.member.permissions.has('ADMINISTRATOR') || Module.config.adminId.includes(msg.author.id))))
 })
 .addEvent("guildCreate", (guild) => {
   Module.db.server.addServer(guild);
