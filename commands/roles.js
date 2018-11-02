@@ -1,56 +1,98 @@
 const Augur = require("augurbot"),
   u = require("../utils/utils");
 
-const Module = new Augur.Module()
-.addCommand({name: "assignroles",
-  aliases: ["roleme", "addrole"],
-  description: "Assigns ranked or regional roles based on your ranked stats.",
-  category: "Profile",
-  permissions: (msg) => msg.guild && msg.guild.members.get(msg.client.user.id).permissions.has("MANAGE_ROLES") && ((Module.db.server.getSettings(msg.guild.id).regionRoles && Module.db.server.getSettings(msg.guild.id).regionRoles.length > 0) || (Module.db.server.getSettings(msg.guild.id).rankedRoles && Module.db.server.getSettings(msg.guild.id).rankedRoles.length > 0)),
-  process: async (msg) => {
-    try {
-      let user = await Module.db.claim.getUser(msg.author.id);
-      if (user && user.bhid) {
-        let { regionRoles, rankedRoles } = await Module.db.server.getSettings(msg.guild.id);
-        let bh = require("brawlhalla-api")(Module.config.api.bh);
-        let ranked = await bh.getPlayerRanked(user.bhid);
+async function roleMe(member, msg = null) {
+  try {
+    let guild = member.guild;
+    let user = await Module.db.claim.getUser(member.id);
+    if (user && user.bhid) {
+      let { regionRoles, rankedRoles, clanRole, clanId } = await Module.db.server.getSettings(guild.id);
+      let bh = require("brawlhalla-api")(Module.config.api.bh);
+      let ranked = await bh.getPlayerRanked(user.bhid);
+      let stats = await bh.getPlayerStats(user.bhid);
+      let roles = [];
 
-        if (ranked && ranked.tier && ranked.region) {
-          let roles = [];
-          if (regionRoles && regionRoles.length > 0) {
-            let regions = Object.keys(bh.regions);
+      if (ranked && ranked.tier && ranked.region) {
 
-            regions.forEach((region, i) => {
-              if ((ranked.region.toLowerCase() == region.toLowerCase()) && regionRoles[i]) {
-                let role = msg.guild.roles.get(regionRoles[i]);
-                if (role) {
-                  msg.member.addRole(role);
-                  roles.push(role);
-                }
-              }
-            });
-          }
-          if (rankedRoles && rankedRoles.length > 0) {
-            let ranks = [ "diamond", "platinum", "gold", "silver", "bronze", "tin" ];
+        // Region Role
+        if (regionRoles && regionRoles.length > 0) {
+          let regions = Object.keys(bh.regions);
 
-            ranks.forEach((rank, i) => {
-              if (ranked.tier.toLowerCase().startsWith(rank) && rankedRoles[i]) {
-                let role = msg.guild.roles.get(rankedRoles[i]);
-                if (role) {
-                  msg.member.addRole(rankedRoles[i]);
-                  roles.push(role);
-                }
-              }
-            });
-          }
-          if (roles.length > 0) msg.reply(`I gave you the ${roles.map(r => r.name).join(" and ")} role(s).`).then(u.clean);
-          else msg.reply("I couldn't find any roles to give you.").then(u.clean);
+          regions.forEach((region, i) => {
+            if ((ranked.region.toLowerCase() == region.toLowerCase()) && regionRoles[i] && guild.roles.has(regionRoles[i]))
+              roles.push(regionRoles[i]);
+          });
         }
-        else msg.reply("you need to play at least one ranked game this season before I can apply roles.").then(u.clean);
+
+        // Ranked Role
+        if (rankedRoles && rankedRoles.length > 0) {
+          let ranks = [ "diamond", "platinum", "gold", "silver", "bronze", "tin" ];
+
+          ranks.forEach((rank, i) => {
+            if (ranked.tier.toLowerCase().startsWith(rank) && rankedRoles[i] && guild.roles.has(rankedRoles[i]))
+              roles.push(rankedRoles[i]);
+          });
+        }
       }
-      else msg.reply("you need to `claim` your account first.").then(u.clean);
-    } catch(e) { u.alertError(e, msg); }
+
+      // Clan Role
+      if (stats && stats.clan && stats.clan.clan_id && clanRole && (clanId == stats.clan.clan_id) && guild.roles.has(clanRole))
+        roles.push(clanRole);
+
+      // Apply
+      if (roles.length > 0) {
+        let removeRoles = [].concat(clanRole, rankedRoles, regionRoles).filter((r, i, a) => (!roles.includes(r) && member.roles.has(r) && (i == a.indexOf(r)) && member.guild.roles.has(r)));
+        roles = roles.filter(r => !member.roles.has(r));
+
+        for (let i = 0; i < roles.length; i++) await member.addRole(roles[i]);
+        for (let i = 0; i < removeRoles.length; i++) await member.removeRole(removeRoles[i]);
+
+        //if (msg) msg.reply(`I gave you the ${roles.map(r => guild.roles.get(r).name).join(", ")} role(s).`).then(u.clean);
+        if (msg) msg.react("👌");
+      } else if (msg) msg.reply("I couldn't find any roles to give you.").then(u.clean);
+    }
+    else if (msg) msg.reply("you need to `claim` your account first.").then(u.clean);
+  } catch(e) { u.alertError(e, msg); }
+  if (msg) u.clean(msg);
+}
+
+function canManage(msg) {
+  if (msg.guild && msg.guild.members.get(msg.client.user.id).permissions.has("MANAGE_ROLES")) {
+    let settings = Module.db.server.getSettings(msg.guild.id);
+    if (
+      (settings.regionRoles && settings.regionRoles.length > 0) ||
+      (settings.rankedRoles && settings.rankedRoles.length > 0) ||
+      (settings.clanRole && settings.clanId)
+    ) return true;
   }
+  return false;
+}
+
+const Module = new Augur.Module()
+.addCommand({name: "roleme",
+  aliases: ["addrole", "assignroles"],
+  description: "Assigns ranked, regional, and clan roles based on your ranked stats.",
+  category: "Profile",
+  permissions: canManage,
+  process: (msg) => roleMe(msg.member, msg)
+})
+.addCommand({name: "removeroles",
+  description: "Removes ranked, regional, and clan roles.",
+  category: "Profile",
+  permissions: (msg) => canManage(msg) && !Module.db.server.getSetting(msg.guild, "enforceRoles"),
+  process: (msg) => {
+
+    let { regionRoles, rankedRoles, clanRole } = Module.db.server.getSettings(msg.guild.id);
+    let roles = [].concat(clanRole, regionRoles, rankedRoles).filter(r => msg.member.roles.has(r));
+    msg.member.removeRoles(roles);
+    msg.react("👌");
+    u.clean(msg);
+  }
+})
+.addEvent("guildMemberAdd", async member => {
+  try {
+    if (canManage({guild: member.guild, client: member.client})) roleMe(member);
+  } catch(e) { u.alertError(e); }
 });
 
 module.exports = Module;

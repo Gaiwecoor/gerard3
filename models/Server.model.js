@@ -19,6 +19,10 @@ var ServerSchema = new Schema({
 		type: String,
 		default: null
 	},
+	autoRole: Boolean,
+	clanId: Number,
+	clanRole: String,
+	enforceRoles: Boolean,
 	rankedRoles: [String],
 	regionRoles: [String],
 	challonge: {
