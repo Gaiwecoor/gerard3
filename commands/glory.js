@@ -37,7 +37,7 @@ function bestRating(rank) {
 const Module = new Augur.Module()
 .addCommand({name: "glory",
 	description: "Get an *estimate* of the amount of Glory you'll receive at the end of the current ranked season.",
-	info: "Glory is awarded based on a combination of ranked wins and peak rating across all ranked game modes.",
+	info: "Get an *estimate* of the amount of Glory you'll receive at the end of the current ranked season.\n\nGlory is awarded based on a combination of ranked wins and peak rating across all ranked game modes.",
 	category: "Stats",
 	process: async (msg) => {
 		try {
