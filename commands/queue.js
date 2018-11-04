@@ -32,7 +32,7 @@ function checkBoard(msg, region, board = "1v1") {
 
       let channel = u.botSpam(msg);
       channel.send(embed).catch(e => {
-				if (msg.guild && !channel.permissionsFor(bot.user).has("EMBED_LINKS")) {
+				if (msg.guild && !channel.permissionsFor(msg.client.user).has("EMBED_LINKS")) {
 					channel.send(msg.author + ", my new system requires the `Embed Links` permission for me to work properly, and it looks like I don't have those. Try talking to the server owner to make sure I have the permissions I need.");
 				} else u.alertError(e, msg);
 			});
