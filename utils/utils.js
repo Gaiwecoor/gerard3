@@ -94,9 +94,8 @@ const Utils = {
   userMentions: function(msg) {
     // Useful to ensure the bot isn't included in the mention list,
     // such as when the bot mention is the command prefix
-    let bot = msg.client;
     let userMentions = msg.mentions.users;
-    if (userMentions.has(bot.user.id)) userMentions.delete(bot.user.id);
+    if (userMentions.has(msg.client.user.id)) userMentions.delete(msg.client.user.id);
     return (userMentions.size > 0 ? userMentions : null);
   }
 };

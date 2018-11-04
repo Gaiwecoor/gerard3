@@ -71,7 +71,7 @@ function oldSettings(msg, suffix) {
     // PREFIX
     value = args.join(" ").trim();
     let userMentions = u.userMentions(msg);
-    if (userMentions && ((userMentions.size > 1) || ((userMentions.size == 1) && (userMentions.first().id != bot.user.id)))) {
+    if (userMentions && ((userMentions.size > 1) || ((userMentions.size == 1) && (userMentions.first().id != msg.client.user.id)))) {
       msg.reply("you cannot set the command prefix to mention any user but me.").then(u.clean);
     } else {
       Module.db.server.saveSetting(msg.guild, 'prefix', value);

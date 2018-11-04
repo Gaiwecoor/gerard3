@@ -17,7 +17,7 @@ const Module = new Augur.Module()
   		.addField("Patreon", "[Patreon](https://www.patreon.com/gaiwecoor)");
 
   	msg.channel.send(embed).catch(e => {
-			if (msg.guild && !msg.channel.permissionsFor(bot.user).has("EMBED_LINKS")) {
+			if (msg.guild && !msg.channel.permissionsFor(msg.client.user).has("EMBED_LINKS")) {
 				msg.channel.send(msg.author + ", my system requires `Embed Links` permissions for me to work properly, and it looks like I don't have those. Try talking to the server owner to make sure I have the permissions I need.");
 			} else u.alertError(e, msg);
 		});

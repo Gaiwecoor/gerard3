@@ -64,7 +64,7 @@ const Module = new Augur.Module()
           .addField("Playing", body.stream.game, true)
           .addField("Current Viewers", body.stream.viewers, true);
         msg.channel.send(embed).catch(e => {
-					if (msg.guild && !msg.channel.permissionsFor(bot.user).has("EMBED_LINKS")) {
+					if (msg.guild && !msg.channel.permissionsFor(msg.client.user).has("EMBED_LINKS")) {
 						msg.channel.send(msg.author + ", my new system requiresthe `Embed Links` permission for me to work properly, and it looks like I don't have that. Try talking to the server owner to make sure I have the permissions I need.");
 					} else u.alertError(e, msg);
 				});
@@ -76,7 +76,7 @@ const Module = new Augur.Module()
               .setThumbnail(body.logo)
               .addField("Followers", body.followers);
             msg.channel.send(embed).catch(e => {
-    					if (msg.guild && !msg.channel.permissionsFor(bot.user).has("EMBED_LINKS")) {
+    					if (msg.guild && !msg.channel.permissionsFor(msg.client.user).has("EMBED_LINKS")) {
     						msg.channel.send(msg.author + ", my new system requires the `Embed Links` permission for me to work properly, and it looks like I don't have that. Try talking to the server owner to make sure I have the permissions I need.");
     					} else u.alertError(e, msg);
     				});
@@ -109,7 +109,7 @@ const Module = new Augur.Module()
         if (embed.fields.length > 0) {
           let channel = u.botSpam(msg);
           channel.send(embed).catch(e => {
-            if (msg.guild && !channel.permissionsFor(bot.user).has("EMBED_LINKS")) {
+            if (msg.guild && !channel.permissionsFor(msg.client.user).has("EMBED_LINKS")) {
               channel.send(msg.author + ", my new system requires the `Embed Links` permission for me to work properly, and it looks like I don't have that. Try talking to the server owner to make sure I have the permissions I need.");
             } else u.alertError(e, msg);
           });
