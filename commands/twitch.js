@@ -60,7 +60,7 @@ const Module = new Augur.Module()
       if (error) u.alertError(error, msg);
       else if (body.stream) {
         embed.setDescription(body.stream.channel.status)
-          .setThumbnail(body.stream.preview.small)
+          .setThumbnail(`${body.stream.preview.medium}?t=${Date.now()}`)
           .addField("Playing", body.stream.game, true)
           .addField("Current Viewers", body.stream.viewers, true);
         msg.channel.send(embed).catch(e => {
