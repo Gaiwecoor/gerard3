@@ -17,7 +17,7 @@ const Module = new Augur.Module()
       let embed = u.embed()
         .setTitle(`${msg.guild.name} members currently playing ${suffix}`)
         .setDescription(playerNames)
-        .setTimestamp
+        .setTimestamp();
       u.botSpam(msg).send(embed);
     } else msg.channel.send(`I couldn't find any members playing ${suffix}.`);
   },
