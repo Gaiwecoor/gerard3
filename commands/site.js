@@ -12,19 +12,6 @@ const app = new Express(),
   http = require("http").Server(app);
 
 const Module = new Augur.Module()
-.addCommand({name: "rs",
-  category: "Admin",
-  hidden: true,
-  process: (msg) => {
-    let path = require("path");
-    let file = "site.js";
-
-    Module.handler.reload(path.resolve(process.cwd(), "./commands/", file));
-
-    msg.channel.send("Reloaded " + file);
-  },
-  permissions: (msg) => Module.config.adminId.includes(msg.author.id)
-})
 .setInit(() => {
   if (!Module.handler.client.shard || Module.handler.client.shard.id == 0) {
     app.set("views", "./site/views");
