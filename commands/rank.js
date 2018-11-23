@@ -86,10 +86,12 @@ function rankedEmbed(rank, index = 0, count = null) {
     rank.team = rank["2v2"][0];
   }
 
-  rank.legends.sort((a, b) => b.rating - a.rating);
-  let bestLegend = rank.legends[0];
+  if (rank.legends) {
+    rank.legends.sort((a, b) => b.rating - a.rating);
+    let bestLegend = rank.legends[0];
 
-  rank.legends.sort((a, b) => b.games - a.games);
+    rank.legends.sort((a, b) => b.games - a.games);
+  }
 
   for (var x in rankInfo) {
     if (rank.tier.toLowerCase().startsWith(x)) {
@@ -103,8 +105,9 @@ function rankedEmbed(rank, index = 0, count = null) {
 
   embed.setTitle(`${(rank.verified ? "☑️ Verified " : "")}Ranked Data for ${u.decode(rank.name)}`)
     .addField("Name", name, true)
-    .addField("Region", rank.region, true)
-    .addField("Legends", `Highest Rating: ${bh.legendSummaries.get(bestLegend.legend_id).bio_name}\nMost Played: ${bh.legendSummaries.get(rank.legends[0].legend_id).bio_name}`, true);
+    .addField("Region", rank.region, true);
+  if (rank.legends)
+    embed.addField("Legends", `Highest Rating: ${bh.legendSummaries.get(bestLegend.legend_id).bio_name}\nMost Played: ${bh.legendSummaries.get(rank.legends[0].legend_id).bio_name}`, true);
 
   if (count > 1)
     embed.setDescription(`Result ${(index + 1)} of ${count}. React with ◀ or ▶ within ${(time / 60000)} minutes to view other results.`);
