@@ -81,8 +81,10 @@ function rankedEmbed(rank, index = 0, count = null) {
 
   rank.loss = rank.games - rank.wins;
   rank.winrate = ((rank.games > 0) ? (100 * rank.wins / rank.games).toFixed(1) : 0);
-  rank["2v2"].sort((a, b) => b.rating - a.rating);
-  rank.team = rank["2v2"][0];
+  if (rank["2v2"]) {
+    rank["2v2"].sort((a, b) => b.rating - a.rating);
+    rank.team = rank["2v2"][0];
+  }
 
   rank.legends.sort((a, b) => b.rating - a.rating);
   let bestLegend = rank.legends[0];
