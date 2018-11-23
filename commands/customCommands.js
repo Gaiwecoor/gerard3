@@ -35,7 +35,8 @@ function runCustomCommand(msg) {
 }
 
 const Module = new Augur.Module()
-.addCommand({name: "customcommand",
+.addCommand({name: "tag",
+  aliases: ["customcommand"],
   category: "Server Admin",
   syntax: "<Command Name> <Command Response>",
   description: "Adds a custom command for your server.",
