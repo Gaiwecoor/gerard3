@@ -8,6 +8,10 @@ const Discord = require("discord.js"),
 const Utils = {
   alertError: function(error, msg = null) {
     if (!error || error.name == "DiscordAPIError") return;
+    else if (error.error && error.error.code == 503) {
+      if (msg) msg.channel.send("The API is down temporarily. Please try again in a few minutes.");
+      return;
+    }
 
     let errorInfo = new Discord.RichEmbed()
     .setTimestamp()
@@ -18,7 +22,7 @@ const Utils = {
       if (bot.shard) errorInfo.addField("Shard", bot.shard.id, true);
 
       msg.channel.send("I've run into an error. I've let my owner know.")
-        .then(Utils.clean);
+      .then(Utils.clean);
 
       errorInfo
       .addField("User", msg.author.username, true)
@@ -26,7 +30,7 @@ const Utils = {
       .addField("Command", (msg.cleanContent ? msg.cleanContent : "EMPTY"), true)
     }
 
-    let errorStack = (error.stack ? error.stack : error.toString());
+    let errorStack = (error.stack ? error.stack : error);
 
     console.error(Date());
     if (msg) console.error(`${msg.author.username} in ${(msg.guild ? (msg.guild.name + " > " + msg.channel.name) : "DM")}: ${msg.cleanContent}`);
