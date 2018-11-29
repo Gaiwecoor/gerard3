@@ -102,7 +102,7 @@ function rankedEmbed(rank, index = 0, count = null) {
     }
   }
 
-  let name = `**${u.decode(rank.name)}**` + (rank.clan ? `\n< [${u.decode(rank.clan.clan_name)}](https://brawldb.com/clan/info/${rank.clan.clan_id}) >` : "");
+  let name = `**[${u.decode(rank.name)}](https://brawldb.com/player/stats/${rank.brawlhalla_id})**` + (rank.clan ? `\n< [${u.decode(rank.clan.clan_name)}](https://brawldb.com/clan/info/${rank.clan.clan_id}) >` : "");
 
   embed.setTitle(`${(rank.verified ? "☑️ Verified " : "")}Ranked Data for ${u.decode(rank.name)}`)
     .addField("Name", name, true)
@@ -138,7 +138,8 @@ function rankedEmbed(rank, index = 0, count = null) {
     } catch(e) { console.error(e); }
   }
 
-  embed.addField("More Stats Available On:", statSites(rank.brawlhalla_id));
+  //embed.addField("More Stats Available On:", statSites(rank.brawlhalla_id));
+  embed.setURL(`https://brawldb.com/player/stats/${rank.brawlhalla_id}`);
 
   return embed;
 }
@@ -213,7 +214,7 @@ function statEmbed(stats) {
 
   let embed = u.embed()
   .setTitle(`${(stats.verified ? "☑️ Verified " : "")}Brawlhalla Stats for ${u.decode(stats.name)}`)
-  .addField("Name", `**${u.decode(stats.name)}**` + (stats.clan ? (`\n< [${u.decode(stats.clan.clan_name)}](https://brawldb.com/clan/info/${stats.clan.clan_id}) >`) : ""), true)
+  .addField("Name", `**[${u.decode(stats.name)}](https://brawldb.com/player/stats/${stats.brawlhalla_id})**` + (stats.clan ? (`\n< [${u.decode(stats.clan.clan_name)}](https://brawldb.com/clan/info/${stats.clan.clan_id}) >`) : ""), true)
   .addField("Overall", [
     `${stats.wins} Wins / ${stats.games - stats.wins} Losses (${stats.games} Games)`,
     `${(100 * stats.wins / stats.games).toFixed(1)}% Winrate`
@@ -230,7 +231,8 @@ function statEmbed(stats) {
     "**Highest Avg DPS:** " + (response.weapon.dps ? `${response.weapon.dps.name} (${response.weapon.dps.value})` : "None"),
     "**Shortest Avg TTK:** " + (response.weapon.ttk ? `${response.weapon.ttk.name} (${response.weapon.ttk.value}s)` : "None")
   ].join("\n"), true)
-  .addField("More Stats Available On:", statSites(stats.brawlhalla_id));
+  .setURL(`https://brawldb.com/player/stats/${stats.brawlhalla_id}`);
+  //.addField("More Stats Available On:", statSites(stats.brawlhalla_id));
 
   return embed;
 }
@@ -238,8 +240,8 @@ function statEmbed(stats) {
 function statSites(bhid) {
   let sites = {
 		"BrawlDB": "https://brawldb.com/player/stats?bhId=",
-		"BrawlBay": "https://www.brawlbay.com/result/?ident=",
-		"Brawlmance": "https://brawlmance.com/search?brawlhalla_id="
+		// "BrawlBay": "https://www.brawlbay.com/result/?ident=", // Unmaintained
+		// "Brawlmance": "https://brawlmance.com/search?brawlhalla_id=" // Better for global stats
 	}
 	return Object.keys(sites).map(site => `[${site}](${sites[site]}${bhid})`).join("\n");
 }
