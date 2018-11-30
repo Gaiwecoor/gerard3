@@ -90,7 +90,7 @@ function legendEmbed(legend, full = false) {
     embed.setDescription(text);
   } else if (full) {
     embed.setDescription(legend.bio_text.replace(/\n/g, "\n\n"));
-  } else embed.setFooter(`React with ➕ within ${expandDuration} minutes to see full lore.`);
+  } else embed.setDescription(`React with ➕ within ${expandDuration} minutes to see full lore.`);
 
   return embed;
 }
