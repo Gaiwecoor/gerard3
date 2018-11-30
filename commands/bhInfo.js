@@ -79,7 +79,7 @@ function legendEmbed(legend, full = false) {
 
   let embed = u.embed()
     .setAuthor("Brawlhalla Lore")
-    .setTitle(`**${legend.bio_name}** - *${legend.bio_aka}*`)
+    .setTitle(`${legend.bio_name} - ${legend.bio_aka}`)
     .setThumbnail(`${Module.config.imgPath}/legends/${slug}.png?API_KEY=${Module.config.api.resource}`)
     .addField("Quotes", quotes)
     .addField("Weapons", legend.weapon_one + "\n" + legend.weapon_two, true)
