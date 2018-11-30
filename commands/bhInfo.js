@@ -2,6 +2,8 @@ const Augur = require("augurbot"),
   cheerio = require("cheerio"),
   parseXML = require("xml2js").parseString,
   request = require("request-promise-native"),
+  bh_key = require("../config/config").api.bh,
+  bh = require("brawlhalla-api")(bh_key),
   u = require("../utils/utils");
 
 const expandDuration = 10;
@@ -176,8 +178,6 @@ const Module = new Augur.Module()
   syntax: "[region]",
   aliases: ["ping"],
   process: (msg, suffix) => {
-    let bh = require("brawlhalla-api")(Module.config.api.bh);
-
     let alias = {
       "us e": "us-e", "use": "us-e",
       "us w": "us-w", "usw": "us-w",
