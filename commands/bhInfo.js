@@ -4,6 +4,8 @@ const Augur = require("augurbot"),
   request = require("request-promise-native"),
   u = require("../utils/utils");
 
+const expandDuration = 10;
+
 async function announce(handler, item) {
   try {
     let embed = await feedEmbed(item);
@@ -68,6 +70,58 @@ function fetchFeed(type = null) {
   });
 }
 
+function legendEmbed(legend, full = false) {
+  let slug = legend.legend_name_key.replace(" ", "_");
+
+  let quotes = `${legend.bio_quote_from}\n  *${legend.bio_quote_from_attrib}*\n\n${legend.bio_quote}\n  *${legend.bio_quote_about_attrib}*`.replace(/\"/g, "");
+
+  let embed = u.embed()
+    .setAuthor("Brawlhalla Lore")
+    .setTitle(`**${legend.bio_name}** - *${legend.bio_aka}*`)
+    .setThumbnail(`${Module.config.imgPath}/legends/${slug}.png?API_KEY=${Module.config.api.resource}`)
+    .addField("Quotes", quotes)
+    .addField("Weapons", legend.weapon_one + "\n" + legend.weapon_two, true)
+    .addField("Stats", `**Str:** ${legend.strength}\n**Dex:** ${legend.dexterity}\n**Def:** ${legend.defense}\n**Spd:** ${legend.speed}`, true);
+
+  if (full && legend.bio_text.length > 2048) {
+    let text = legend.bio_text.substr(0, legend.bio_text.indexOf(".", 1648) + 1).replace(/\n/g, "\n\n") + "\n...";
+    embed.setDescription(text);
+  } else if (full) {
+    embed.setDescription(legend.bio_text.replace(/\n/g, "\n\n"));
+  } else embed.setFooter(`React with ➕ within ${expandDuration} minutes to see full lore.`);
+
+  return embed;
+}
+
+async function loadBio(msg, legend) {
+  try {
+    if (msg.channel && (((msg.channel.type == "text") && msg.channel.permissionsFor(msg.client.user).has("ADD_REACTIONS")) || (msg.channel.type == "dm")))
+      await msg.react("➕");
+
+    let reactions = await msg.awaitReactions(
+      (reaction, user) => ((reaction.emoji.name == "➕") && !user.bot),
+      {max: 1, time: expandDuration * 60000}
+    );
+
+    if (reactions.size > 0) {
+      let embed = legendEmbed(legend, true);
+      let m = await msg.edit(embed);
+
+      if ((msg.channel.type) == "text" && msg.channel.permissionsFor(msg.client.user).has("MANAGE_MESSAGES")) {
+        await msg.clearReactions();
+      } else if (msg.reactions.has("➕")) {
+        msg.reactions.get("➕").remove(msg.client.user.id);
+      }
+    } else if (msg.reactions.has("➕")) {
+      msg.reactions.get("➕").remove(msg.client.user.id);
+    }
+  } catch(e) {
+    if (msg.channel.guild && !msg.channel.permissionsFor(msg.client.user).has(["EMBED_LINKS", "ADD_REACTIONS"]))
+      msg.channel.send(msg.author + ", my system requires `Add Reactions` and `Embed Links` permissions for me to function properly and it looks like I don't have those. Try talking to the server owner to make sure I have the permissions I need.");
+    else u.alertError(e);
+  }
+}
+
 function updateLegends(key) {
   let bhApi = require("brawlhalla-api")(key);
   bhApi.updateLegends();
@@ -93,36 +147,16 @@ const Module = new Augur.Module()
   aliases: ["lore", "legendinfo"],
   process: async (msg, suffix) => {
     try {
-      let bh = require("brawlhalla-api")(Module.config.api.bh);
       if (suffix) {
         let legend = await bh.getLegendInfo(suffix);
         if (legend) {
-          let slug = legend.legend_name_key.replace(" ", "_");
-
-          let quotes = [
-            legend.bio_quote_from,
-            legend.bio_quote_from_attrib,
-            legend.bio_quote,
-            legend.bio_quote_about_attrib
-          ].map(q => q.replace(/\"/g, "")).join("\n\n");
-
-          let embed = u.embed()
-            .setAuthor("Brawlhalla Lore")
-            .setTitle(legend.bio_name)
-            .setDescription(`*${legend.bio_aka}*\n\n${quotes}`)
-            .setThumbnail(`${Module.config.imgPath}/legends/${slug}.png?API_KEY=${Module.config.api.resource}`)
-            .addField("Weapons", legend.weapon_one + "\n" + legend.weapon_two, true)
-            .addField("Stats", `**Str:** ${legend.strength}\n**Dex:** ${legend.dexterity}\n**Def:** ${legend.defense}\n**Spd:** ${legend.speed}`, true);
-
+          let embed = legendEmbed(legend);
           let channel = u.botSpam(msg);
 
-          channel.send(embed).catch(e => {
-            if (msg.guild && !channel.permissionsFor(msg.client.user).has("EMBED_LINKS")) {
-              channel.send(msg.author + ", my system requires `Embed Links` permissions for me to work properly, and it looks like I don't have those. Try talking to the server owner to make sure I have the permissions I need.");
-            } else u.alertError(e, msg);
-          });
+          let m = await channel.send(embed);
+          loadBio(m, legend);
         } else msg.reply("I couldn't find that legend.").then(u.clean);
-      }
+      } else msg.reply("You need to tell me which legend to display.").then(u.clean);
     } catch(e) { u.alertError(e, msg); }
   }
 })
