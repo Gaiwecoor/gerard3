@@ -6,37 +6,39 @@ const Augur = require("augurbot"),
   time = 900000;
 
 async function awaitNav(msg) {
-    try {
-      let { results, index, user, cache } = rankedResults.get(msg.id);
-      let nav = ["◀", "▶"];
+  try {
+    let { results, index, user, cache } = rankedResults.get(msg.id);
+    let nav = ["◀", "▶"];
 
-      if (msg.channel && (((msg.channel.type == "text") && msg.channel.permissionsFor(msg.client.user).has("ADD_REACTIONS")) || (msg.channel.tyle == "dm"))) {
-        await msg.react(nav[0]);
-        await msg.react(nav[1]);
-      }
-
-      let reactions = await msg.awaitReactions(
-        (reaction, u) => u.id == user && nav.includes(reaction.emoji.name),
-        { max: 1, time: time }
-      );
-
-      if (reactions.size == 0) {
-        // Timeout. Clear reaction seeds.
-        if (((msg.channel.type == "text") && msg.channel.permissionsFor(msg.client.user).has("ADD_REACTIONS")) || (msg.channel.tyle == "dm"))
-          nav.forEach(n => msg.reactions.get(n).remove(msg.client.user.id));
-      } else {
-        // Navigate and update.
-        index += (2 * nav.indexOf(reactions.first().emoji.name) - 1);
-        if (index < 0) index += results.length;
-        else if (index >= results.length) index %= results.length;
-        rankedResults.set(msg.id, { results, index, user, cache });
-        updateRankedEmbed(msg);
-      }
-    } catch(e) {
-      if (msg.channel.guild && !msg.channel.permissionsFor(msg.client.user).has(["EMBED_LINKS", "ADD_REACTIONS"]))
-      msg.channel.send(msg.author + ", my system requires `Add Reactions` permissions for me to function properly and it looks like I don't have those. Try talking to the server owner to make sure I have the permissions I need.");
-      else u.alertError(e);
+    if (msg.channel && (((msg.channel.type == "text") && msg.channel.permissionsFor(msg.client.user).has("ADD_REACTIONS")) || (msg.channel.tyle == "dm"))) {
+      await msg.react(nav[0]);
+      await msg.react(nav[1]);
     }
+
+    let reactions = await msg.awaitReactions(
+      (reaction, u) => u.id == user && nav.includes(reaction.emoji.name),
+      { max: 1, time: time }
+    );
+
+    if (reactions.size == 0) {
+      // Timeout. Clear reaction seeds.
+      if (((msg.channel.type == "text") && msg.channel.permissionsFor(msg.client.user).has("ADD_REACTIONS")) || (msg.channel.tyle == "dm")) {
+        if (msg.reactions.has(nav[0])) msg.reactions.get(nav[0]).remove(msg.client.user.id);
+        if (msg.reactions.has(nav[1])) msg.reactions.get(nav[1]).remove(msg.client.user.id);
+      }
+    } else {
+      // Navigate and update.
+      index += (2 * nav.indexOf(reactions.first().emoji.name) - 1);
+      if (index < 0) index += results.length;
+      else if (index >= results.length) index %= results.length;
+      rankedResults.set(msg.id, { results, index, user, cache });
+      updateRankedEmbed(msg);
+    }
+  } catch(e) {
+    if (msg.channel.guild && !msg.channel.permissionsFor(msg.client.user).has(["EMBED_LINKS", "ADD_REACTIONS"]))
+    msg.channel.send(msg.author + ", my system requires `Add Reactions` permissions for me to function properly and it looks like I don't have those. Try talking to the server owner to make sure I have the permissions I need.");
+    else u.alertError(e);
+  }
 }
 
 async function getFullRank(result) {
