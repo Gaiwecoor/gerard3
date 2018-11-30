@@ -16,7 +16,7 @@ function currentPlayers(msg, game) {
   .join("\n");
 
   if (players.length > 0) {
-    if (players.length > 1024) players = players.substr(0, players.indexOf("\n", 1000)) + "\n...";
+    if (players.length > 2048) players = players.substr(0, players.indexOf("\n", 2000)) + "\n...";
     embed.setDescription(players);
   } else
     embed.setDescription(`I couldn't find any members playing ${game}.`);
