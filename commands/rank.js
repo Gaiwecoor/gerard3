@@ -263,7 +263,7 @@ async function updateRankedEmbed(msg) {
     let channel = msg.channel;
 
     let m = null;
-    if ((channel.type == "dm") || channel.permissionsFor(msg.client.user).has("MANAGE_MESSAGES")) {
+    if ((channel.type == "text") && channel.permissionsFor(msg.client.user).has("MANAGE_MESSAGES")) {
       await msg.clearReactions();
       m = await msg.edit(rankedEmbed(rank, index, results.length));
     } else {
