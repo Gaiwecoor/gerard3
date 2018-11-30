@@ -10,7 +10,7 @@ async function awaitNav(msg) {
     let { results, index, user, cache } = rankedResults.get(msg.id);
     let nav = ["◀", "▶"];
 
-    if (msg.channel && (((msg.channel.type == "text") && msg.channel.permissionsFor(msg.client.user).has("ADD_REACTIONS")) || (msg.channel.tyle == "dm"))) {
+    if (msg.channel && (((msg.channel.type == "text") && msg.channel.permissionsFor(msg.client.user).has("ADD_REACTIONS")) || (msg.channel.type == "dm"))) {
       await msg.react(nav[0]);
       await msg.react(nav[1]);
     }
