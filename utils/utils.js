@@ -70,6 +70,7 @@ const Utils = {
   },
   embed: () => new Discord.RichEmbed().setColor(config.color).setFooter("Support Gerard development at https://www.patreon.com/gaiwecoor"),
   errorLog: errorLog,
+  escapeText: (txt) => txt.replace(/\*/g,"\\*").replace(/_/g,"\\_").replace(/~/g,"\\~"),
   handler: null,
   parse: function(msg) {
     try {
