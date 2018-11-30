@@ -75,7 +75,7 @@ function fetchFeed(type = null) {
 function legendEmbed(legend, full = false) {
   let slug = legend.legend_name_key.replace(" ", "_");
 
-  let quotes = `${legend.bio_quote_from}\n  *${legend.bio_quote_from_attrib}*\n\n${legend.bio_quote}\n  *${legend.bio_quote_about_attrib}*`.replace(/\"/g, "");
+  let quotes = `${legend.bio_quote}\n  *${legend.bio_quote_about_attrib}*\n\n${legend.bio_quote_from}\n  *${legend.bio_quote_from_attrib}*`.replace(/\"/g, "");
 
   let embed = u.embed()
     .setAuthor("Brawlhalla Lore")
