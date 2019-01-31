@@ -183,8 +183,11 @@ function statEmbed(stats) {
     legend.time = legend.matchtime;
     legend.wr = (100 * legend.wins / legend.games).toFixed(1);
 
-    weaponStats.find(w => w.name == bh.legendSummaries.get(legend.legend_id).weapon_one).addStats(legend);
-    weaponStats.find(w => w.name == bh.legendSummaries.get(legend.legend_id).weapon_two).addStats(legend);
+    let legendSummary = bh.legendSummaries.get(legend.legend_id);
+    if (legendSummary) {
+      weaponStats.find(w => w.name == legendSummary.weapon_one).addStats(legend);
+      weaponStats.find(w => w.name == legendSummary.weapon_two).addStats(legend);
+    }
   });
 
   let sort = {
