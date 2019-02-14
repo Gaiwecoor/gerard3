@@ -4,7 +4,7 @@
   "description": "Brawlhalla Discord bot",
   "main": "base.js",
   "dependencies": {
-    "augurbot": "^1.1.4",
+    "augurbot": "^1.1.7",
     "body-parser": "^1.18.3",
     "brawlhalla-api": "^4.0.3",
     "cheerio": "^1.0.0-rc.2",
