@@ -16,7 +16,7 @@ const models = {
       return new Promise((fulfill, reject) => {
         Claim.find(
           { bhid: {$in: clanMembers} },
-          function(err, users) => {
+          function(err, users) {
             if (err) reject(err);
             else fulfill(users);
           }
