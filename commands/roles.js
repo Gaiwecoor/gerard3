@@ -107,19 +107,19 @@ const Module = new Augur.Module()
 
           // Add the role to members
           let updates = guild.members
-          .filter(m => users.includes(m.id) || m.roles.has(settings.clanId));
+          .filter(m => users.includes(m.id) || m.roles.has(settings.clanRole));
           let call = 0;
           let fns = [null, "addRole", "removeRole", null];
 
           for (let [key, member] of updates) {
             let state = 0;
             if (users.includes(member.id)) state += 1;
-            if (member.roles.has(settings.clanId)) state += 2;
+            if (member.roles.has(settings.clanRole)) state += 2;
 
             if (fns[state]) {
               setTimeout((member, fn, role) => {
                 member[fn](role);
-              }, 1200 * call++, member, fns[state], settings.clanId);
+              }, 1200 * call++, member, fns[state], settings.clanRole);
             }
           }
 
