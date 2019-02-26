@@ -125,7 +125,7 @@ const Module = new Augur.Module()
 
           let m = await msg.channel.send(`Updating ${call} clan ${(call == 1 ? "role" : "roles")}. The process should be complete in approximately ${(call * 1.2 / 60).toFixed(1)} minutes.`);
           setTimeout((m) => {
-            m.edit(`Clan role update complete! ${call} ${(call == 1 ? "role" : "roles")} roles updated.`);
+            m.edit(`Clan role update complete! ${call} ${(call == 1 ? "role" : "roles")} updated.`);
           }, 1200 * call, m);
 
         } else msg.reply("your clan doesn't appear to have any members!").then(u.clean);
