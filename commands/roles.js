@@ -98,7 +98,7 @@ const Module = new Augur.Module()
       const settings = Module.db.server.getSettings(msg.guild.id);
       if (settings.clanRole && settings.clanId) {
         const bh = require("brawlhalla-api")(Module.config.api.bh);
-        let clan = await bh.getClanStats(id);
+        let clan = await bh.getClanStats(settings.clanId);
         if (clan && clan.clan && clan.clan.length > 0) {
           let guild = await msg.guild.fetchMembers();
 
