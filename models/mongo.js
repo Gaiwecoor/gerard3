@@ -12,6 +12,17 @@ mongoose.connect(config.db.db, config.db.auth);
 
 const models = {
   claim: {
+    getClanUsers: (clanMembers) => {
+      return new Promise((fulfill, reject) => {
+        Claim.find(
+          { bhid: {$in: clanMembers} },
+          function(err, users) => {
+            if (err) reject(err);
+            else fulfill(users);
+          }
+        )
+      });
+    },
     getTwitch: (channel) => {
       return new Promise((fulfill, reject) => {
         Claim.find(

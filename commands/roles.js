@@ -89,6 +89,50 @@ const Module = new Augur.Module()
     u.clean(msg);
   }
 })
+.addCommand({name: "updateclan",
+  description: "Applies the clan role for those in your server's clan.",
+  category: "Profile",
+  permissions: (msg) => canManage(msg) && (msg.member.permissions.has("MANAGE_GUILD") || msg.member.permissions.has("ADMINISTRATOR")),
+  process: async (msg) => {
+    try {
+      const settings = Module.db.server.getSettings(msg.guild.id);
+      if (settings.clanRole && settings.clanId) {
+        const bh = require("brawlhalla-api")(Module.config.api.bh);
+        let clan = await bh.getClanStats(id);
+        if (clan && clan.clan && clan.clan.length > 0) {
+          let guild = await msg.guild.fetchMembers();
+
+          let clanMembers = clan.clan.map(m => m.brawlhalla_id);
+          let users = (await Module.db.claim.getClanUsers(clanMembers)).map(u => u.discordId);
+
+          // Add the role to members
+          let updates = guild.members
+          .filter(m => users.includes(m.id) || m.roles.has(settings.clanId));
+          let call = 0;
+          let fns = [null, "addRole", "removeRole", null];
+
+          for (let [key, member] of updates) {
+            let state = 0;
+            if (users.includes(member.id)) state += 1;
+            if (member.roles.has(settings.clanId)) state += 2;
+
+            if (fns[state]) {
+              setTimeout((member, fn, role) => {
+                member[fn](role);
+              }, 1200 * call++, member, fns[state], settings.clanId);
+            }
+          }
+
+          let m = await msg.channel.send(`Updating ${call} clan ${(call == 1 ? "role" : "roles")}. The process should be complete in approximately ${(call * 1.2 / 60).toFixed(1)} minutes.`);
+          setTimeout((m) => {
+            m.edit(`Clan role update complete! ${call} ${(call == 1 ? "role" : "roles")} roles updated.`);
+          }, 1200 * call, m);
+
+        } else msg.reply("your clan doesn't appear to have any members!").then(u.clean);
+      } else msg.reply("you must first set your server's clan id and role at <https://gerard.vorpallongspear.com/manage>");
+    } catch(e) { u.alertError(e, msg); }
+  }
+})
 .addEvent("guildMemberAdd", async member => {
   try {
     if (canManage({guild: member.guild, client: member.client})) roleMe(member);
