@@ -16,7 +16,7 @@ async function roleMe(member, msg = null) {
 
         // Region Role
         if (regionRoles && regionRoles.length > 0) {
-          let regions = Object.keys(bh.regions);
+          let regions = ["us-e", "us-w", "eu", "brz", "sea", "aus"];
 
           regions.forEach((region, i) => {
             if ((ranked.region.toLowerCase() == region.toLowerCase()) && regionRoles[i] && guild.roles.has(regionRoles[i]))
