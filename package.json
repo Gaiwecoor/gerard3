@@ -6,7 +6,7 @@
   "dependencies": {
     "augurbot": "^1.1.7",
     "body-parser": "^1.18.3",
-    "brawlhalla-api": "^4.0.3",
+    "brawlhalla-api": "^4.0.5",
     "cheerio": "^1.0.0-rc.2",
     "discord.js": "^11.4.2",
     "express": "^4.16.3",
