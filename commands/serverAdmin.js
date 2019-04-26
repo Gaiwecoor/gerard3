@@ -10,7 +10,7 @@ const Module = new Augur.Module()
   process: async (msg) => {
     try {
       if (msg.guild) {
-        await msg.author.send(`Manage Gerard settings for your server here: <${Module.config.homePage}manage/${msg.guild.id}>`);
+        await msg.author.send(`Manage Gerard settings for ${msg.guild.name} here: <${Module.config.homePage}manage/${msg.guild.id}>`);
         msg.channel.send("I sent you a link to your server management page.").then(u.clean);
       } else msg.channel.send(`Manage Gerard settings for your server(s) here: <${Module.config.homePage}manage>`);
     } catch(e) { u.alertError(e, msg); }
