@@ -2,10 +2,7 @@ const Augur = require("augurbot"),
   u = require("../utils/utils"),
   TwitchApi = require("twitch-api");
 
-var streamStatus = {
-  status: "offline",
-  since: Date.now()
-};
+var streamOnline = false;
 
 function checkStream(Module) {
   let bot = Module.handler.client;
@@ -13,7 +10,7 @@ function checkStream(Module) {
 
   twitch.getChannelStream("brawlhalla", (error, body) => {
     if (error) u.alertError(error);
-    else if (body.stream && (streamStatus.status == "offline")) {
+    else if (body.stream && !streamOnline) {
       bot.user.setActivity(
         body.stream.channel.status,
         {
@@ -22,11 +19,8 @@ function checkStream(Module) {
         }
       );
 
-      streamStatus = {
-        status: "online",
-        since: Date.now()
-      };
-    } else if (!body.stream && (streamStatus.status == "online")) {
+      streamOnline = true;
+    } else if (!body.stream && streamOnline) {
       let gameModes = [
   	    "Free-for-All", "Strikeout", "Experimental", "Brawl of the Week",
   	    "Ranked 1v1", "Ranked 2v2",
@@ -36,10 +30,7 @@ function checkStream(Module) {
   		let game = gameModes[Math.floor(Math.random() * gameModes.length)];
   		bot.user.setActivity(game);
 
-      streamStatus = {
-        status: "offline",
-        since: Date.now()
-      };
+      streamOnline = false;
     }
   });
 }
@@ -123,8 +114,8 @@ const Module = new Augur.Module()
   return setInterval(checkStream, 5 * 60 * 1000, Module);
 })
 .setInit((streamInfo) => {
-  if (streamInfo) streamStatus = streamInfo;
+  if (streamInfo) streamOnline = streamInfo;
 })
-.setUnload(() => streamStatus);
+.setUnload(() => streamOnline);
 
 module.exports = Module;
