@@ -16,7 +16,11 @@ async function announce(handler, item) {
     .filter(s => handler.client.channels.has(s.announce))
     .map(s => handler.client.channels.get(s.announce));
 
-    channels.forEach(c => c.send(embed));
+    for (let i = 0; i < channels.length; i++) {
+      setTimeout((channel) => {
+        channel.send(embed).catch(e => u.alertError(e, "Announce Handler"));
+      }, i * 1200, channels[i]);
+    }
   } catch(e) { u.alertError(e); }
 }
 
