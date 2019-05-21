@@ -1,6 +1,6 @@
 const mongoose = require("mongoose"),
   config = require("../config/config.json"),
-  errorLog = require("../utils/utils").alertError,
+  u = require("../utils/utils"),
   Claim = require("./Claim.model"),
   Command = require("./Command.model"),
   Leaderboard = require("./Leaderboard.model"),
@@ -152,7 +152,7 @@ const models = {
           rankings.forEach(ranking => {
             let bhid = (ranking.brawlhalla_id ? ranking.brawlhalla_id : (ranking.brawlhalla_id_one + "+" + ranking.brawlhalla_id_two));
             Leaderboard.findOne({bhid: bhid}, (err, entry) => {
-              if (err) errorLog(err);
+              if (err) u.alertError(err);
               else {
                 let options = {
                   name: (ranking.name ? ranking.name : ranking.teamname),
@@ -173,13 +173,13 @@ const models = {
                   {$set: options},
                   {new: true, upsert: true},
                   (e, doc) => {
-                    if (e) errorLog(e);
+                    if (e) u.alertError(e);
                   }
                 );
               }
             });
           });
-        }).catch(errorLog);
+        }).catch(u.alertError);
       });
     },
     fetchQueue: (region, board = "1v1", queueTime = 20) => {
