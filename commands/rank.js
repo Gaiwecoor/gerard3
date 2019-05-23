@@ -53,7 +53,10 @@ async function getFullRank(result) {
 }
 
 function rankedEmbed(rank, index = 0, count = null) {
-  let embed = u.embed();
+  let embed = u.embed().addField("Name", name, true);
+
+  if (!rank) return embed.addField("Error", "Sorry, I ran into an error fetching ranked results. Please try again in a moment.");
+
   let rankInfo = {
     diamond: {
       color: [73, 41, 183],
@@ -107,7 +110,6 @@ function rankedEmbed(rank, index = 0, count = null) {
   let name = `**[${u.decode(rank.name)}](https://brawldb.com/player/stats/${rank.brawlhalla_id})**` + (rank.clan ? `\n< [${u.decode(rank.clan.clan_name)}](https://brawldb.com/clan/info/${rank.clan.clan_id}) >` : "");
 
   embed.setTitle(`${(rank.verified ? "☑️ Verified " : "")}Ranked Data for ${u.decode(rank.name)}`)
-    .addField("Name", name, true)
     .addField("Region", rank.region, true);
   if (rank.legends)
     embed.addField("Legends", `Highest Rating: ${bh.legendSummaries.get(bestLegend.legend_id).bio_name}\nMost Played: ${bh.legendSummaries.get(rank.legends[0].legend_id).bio_name}`, true);
