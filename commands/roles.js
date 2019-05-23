@@ -118,7 +118,7 @@ const Module = new Augur.Module()
 
             if (fns[state]) {
               setTimeout((member, fn, role) => {
-                member[fn](role);
+                member[fn](role).catch(e => { u.alertError(e, msg); });
               }, 1200 * call++, member, fns[state], settings.clanRole);
             }
           }
