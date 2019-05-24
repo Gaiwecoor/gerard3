@@ -78,10 +78,24 @@ const Utils = {
     try {
       let prefix = Utils.prefix(msg);
       let message = msg.content;
-      if ((message.startsWith(prefix) || message.startsWith(`<@${msg.client.user.id}>`) || message.startsWith(`<@!${msg.client.user.id}>`)) && !msg.author.bot) {
-        let parse = message.slice(prefix.length).trim().split(" ");
-        let command = parse.shift().toLowerCase();
-        return {command: command, suffix: parse.join(" ")};
+      let parse;
+
+      if (msg.author.bot) {
+        parse = null;
+      } else if (message.startsWith(prefix)) {
+        parse = message.slice(prefix.length);
+      } else if (message.startsWith(`<@${msg.client.user.id}>`)) {
+        parse = message.slice((`<@${msg.client.user.id}>`).length);
+      } else if (message.startsWith(`<@!${msg.client.user.id}>`)) {
+        parse = message.slice((`<@!${msg.client.user.id}>`).length);
+      }
+
+      if (parse) {
+        parse = parse.trim().split(" ");
+        return {
+          command: parse.shift().toLowerCase(),
+          suffix: parse.join(" ")
+        };
       } else return null;
     } catch(e) {
       Utils.alertError(e, msg);
