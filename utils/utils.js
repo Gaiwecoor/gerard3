@@ -78,7 +78,7 @@ const Utils = {
     try {
       let prefix = Utils.prefix(msg);
       let message = msg.content;
-      if (message.startsWith(prefix) && !msg.author.bot) {
+      if ((message.startsWith(prefix) || message.startsWith(`<@${msg.client.user.id}>`) || message.startsWith(`<@!${msg.client.user.id}>`)) && !msg.author.bot) {
         let parse = message.slice(prefix.length).trim().split(" ");
         let command = parse.shift().toLowerCase();
         return {command: command, suffix: parse.join(" ")};
