@@ -8,7 +8,7 @@ function runCustomCommand(msg) {
   if (cmd && customCommands.get(msg.guild.id).has(cmd.command)) {
     let command = customCommands.get(msg.guild.id).get(cmd.command);
     if ((/<@target>/i).test(command.response)) {
-      if (u.userMentions(msg).size > 0) {
+      if (u.userMentions(msg)) {
         u.userMentions(msg).forEach(user => {
           tagResponse(msg, command, user);
         });
