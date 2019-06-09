@@ -7,17 +7,13 @@ function runCustomCommand(msg) {
   let cmd = u.parse(msg);
   if (cmd && customCommands.get(msg.guild.id).has(cmd.command)) {
     let command = customCommands.get(msg.guild.id).get(cmd.command);
-    if (command.attachment) {
-      msg.channel.send(
-        command.response,
-        {
-          file: {
-            attachment: process.cwd() + "/storage/" + command._id,
-            name: command.attachment
-          }
-        }
-      );
-    } else msg.channel.send(command.response);
+    if ((/<@target>/i).test(command.response)) {
+      if (u.userMentions(msg).size > 0) {
+        u.userMentions(msg).forEach(user => {
+          tagResponse(msg, command, user);
+        });
+      } else msg.reply("You need to `@mention` a user with that command!").then(u.clean);
+    } else tagResponse(msg, command);
     return true;
   } else if (cmd && (cmd.command == "help") && (customCommands.get(msg.guild.id).size > 0) && !cmd.suffix) {
     let embed = u.embed()
@@ -32,6 +28,20 @@ function runCustomCommand(msg) {
     embed.setDescription(list.join("\n"));
     msg.author.send(embed);
   }
+}
+
+function tagResponse(msg, command, target = "") {
+  if (command.attachment) {
+    msg.channel.send(
+      command.response.replace(/<@author>/ig, msg.author).replace(/<@target>/ig, target),
+      {
+        file: {
+          attachment: process.cwd() + "/storage/" + command._id,
+          name: command.attachment
+        }
+      }
+    );
+  } else msg.channel.send(command.response.replace(/<@author>/ig, msg.author).replace(/<@target>/ig, target));
 }
 
 const Module = new Augur.Module()
