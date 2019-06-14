@@ -87,7 +87,7 @@ const Module = new Augur.Module()
 			} else if (user && user.bhid) {
 				msg.reply("that user's profile is not public.").then(u.clean);
 			} else if (target.id != msg.author.id) {
-				msg.reply("you need to claim your account before I can estimate your Glory.").then(u.clean);
+				msg.reply("you need to claim your account before I can estimate your Glory. Gloy can also be calculated online, here: <http://www.brawlhalla.com/glory-calculator/>").then(u.clean);
 			} else {
 				msg.reply("you need to `claim` your profile first.").then(u.clean);
 			}
