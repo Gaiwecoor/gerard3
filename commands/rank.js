@@ -318,11 +318,15 @@ const Module = new Augur.Module()
 
             if (user.verified) rank.verified = true;
             embed = rankedEmbed(rank);
-          } else {
+          } else if (stats.brawlhalla_id) {
             // User is currently unranked.
             if (user.verified) stats.verified = true;
             embed = statEmbed(stats)
             .setDescription("This player is currently unranked.\n\nBrawlhalla stats since September 2016.");
+          } else {
+            // User has a bad bhid linked.
+            msg.reply((target.id == msg.author.id ? "it looks like you may have `claim`ed the wrong Brawlhalla ID. Please verify the correct ID!" : "it looks like that user may have `claim`ed the wrong Brawlhalla ID.")).then(u.clean);
+            return;
           }
 
           let channel = u.botSpam(msg);
@@ -396,10 +400,14 @@ const Module = new Augur.Module()
           if (stats.clan && stats.clan.clan_name) rank.clan = stats.clan;
 
           embed = rankedEmbed(rank);
-        } else {
+        } else if (stats.brawlhalla_id) {
           // User is currently unranked.
           embed = statEmbed(stats)
           .setDescription("This player is currently unranked.\n\nBrawlhalla stats since September 2016.");
+        } else {
+          // User has a bad bhid linked.
+          msg.reply((target.id == msg.author.id ? "it looks like you may have `claim`ed the wrong Brawlhalla ID. Please verify the correct ID!" : "it looks like that user may have `claim`ed the wrong Brawlhalla ID.")).then(u.clean);
+          return;
         }
 
         let channel = u.botSpam(msg);
@@ -432,9 +440,15 @@ const Module = new Augur.Module()
         let user = await claim.getUser(target.id);
         if (user && user.bhid && ((user.discordId == msg.author.id) || user.public)) {
           let stats = await bh.getPlayerStats(user.bhid);
-          if (user.verified) stats.verified = true;
-          embed = statEmbed(stats)
-          .setDescription("Brawlhalla stats since September 2016.");
+          if (stats.brawlhalla_id) {
+            if (user.verified) stats.verified = true;
+            embed = statEmbed(stats)
+            .setDescription("Brawlhalla stats since September 2016.");
+          } else {
+            // User has a bad bhid linked.
+            msg.reply((target.id == msg.author.id ? "it looks like you may have `claim`ed the wrong Brawlhalla ID. Please verify the correct ID!" : "it looks like that user may have `claim`ed the wrong Brawlhalla ID.")).then(u.clean);
+            return;
+          }
         } else if (user && user.bhid) {
           msg.reply("that user's profile is not public.").then(u.clean);
         } else if (target.id == msg.author.id) {
