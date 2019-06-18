@@ -142,7 +142,7 @@ function rankedEmbed(rank, index = 0, count = null) {
 
     let newRating = GetPersonalEloFromOldElo(rank.rating);
 
-    embed.addField("Estimated Glory", glory.ratingAward + glory.winsAward, true);
+    //embed.addField("Estimated Glory", glory.ratingAward + glory.winsAward, true);
   }
 
   if (count > 1)
@@ -160,7 +160,7 @@ function rankedEmbed(rank, index = 0, count = null) {
     if (doubles) embed.addField("2v2", `**Rank ${doubles.rank}**\nTop 8: ${doubles.top8}\nTop 32: ${doubles.top32}\n:first_place: ${doubles.gold} :second_place: ${doubles.silver} :third_place: ${doubles.bronze}`, true);
   }
 
-  embed.addField("__Ranked Play__", "\u200B")
+  embed.addField("__Ranked Play__", (glory.games >= 10 ? `**Estimated Glory:** ${(glory.ratingAward + glory.winsAward)}` : "\u200B"))
   .addField("1v1 Rating", `**${rank.tier}** (${rank.rating} / ${rank.peak_rating} Peak)\n${rank.wins} Wins / ${rank.loss} Losses (${rank.games} Games)\n${rank.winrate}% Winrate` + (rank.global_rank ? `\n**Global Rank** ${rank.global_rank}` : "") + (rank.region_rank ? `\n**${rank.region} Rank** ${rank.region_rank}` : ""), true);
 
   if (rank.team) {
