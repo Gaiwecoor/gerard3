@@ -116,11 +116,11 @@ function rankedEmbed(rank, index = 0, count = null) {
 
   let name = `**[${u.decode(rank.name)}](https://brawldb.com/player/stats/${rank.brawlhalla_id})**` + (rank.clan ? `\n< [${u.decode(rank.clan.clan_name)}](https://brawldb.com/clan/info/${rank.clan.clan_id}) >` : "");
 
-  embed.setTitle(`${(rank.verified ? "☑️ Verified " : "")}Ranked Data for ${u.decode(rank.name)}`)
+  embed.setTitle(`${(rank.verified ? "☑️ Verified " : "")}Ranked Data`) // for ${u.decode(rank.name)}`)
     .addField("Name", name, true)
     .addField("Region", rank.region, true);
   if (rank.legends)
-    embed.addField("Legends", `Highest Rating: ${bh.legendSummaries.get(bestLegend.legend_id).bio_name}\nMost Played: ${bh.legendSummaries.get(rank.legends[0].legend_id).bio_name}`, true);
+    embed.addField("Legends", `**Highest Rating:** ${bh.legendSummaries.get(bestLegend.legend_id).bio_name}\n**Most Played:** ${bh.legendSummaries.get(rank.legends[0].legend_id).bio_name}`, true);
 
   let glory = {
     wins: rank.wins,
@@ -142,7 +142,7 @@ function rankedEmbed(rank, index = 0, count = null) {
 
     let newRating = GetPersonalEloFromOldElo(rank.rating);
 
-    //embed.addField("Estimated Glory", glory.ratingAward + glory.winsAward, true);
+    //**embed.a**ddField("Estimated Glory", glory.ratingAward + glory.winsAward, true);
   }
 
   if (count > 1)
