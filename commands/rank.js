@@ -3,7 +3,14 @@ const Augur = require("augurbot"),
   bh = require("brawlhalla-api")(config.api.bh),
   u = require("../utils/utils"),
   rankedResults = new Map(),
-  time = 900000;
+  time = 900000,
+	{
+	  GetGloryFromWins,
+	  GetGloryFromBestRating,
+	  GetHeroEloFromOldElo,
+	  GetPersonalEloFromOldElo,
+	  bestRating
+	} = require("../utils/glory");
 
 async function awaitNav(msg) {
   try {
@@ -114,6 +121,29 @@ function rankedEmbed(rank, index = 0, count = null) {
     .addField("Region", rank.region, true);
   if (rank.legends)
     embed.addField("Legends", `Highest Rating: ${bh.legendSummaries.get(bestLegend.legend_id).bio_name}\nMost Played: ${bh.legendSummaries.get(rank.legends[0].legend_id).bio_name}`, true);
+
+  let glory = {
+    wins: rank.wins,
+    games: rank.games
+  };
+
+  if (rank["2v2"] && (rank["2v2"].length > 0)) {
+    rank["2v2"].forEach(r => {
+      glory.wins += r.wins;
+      glory.games += r.games;
+    });
+  }
+
+  if (glory.games >= 10) {
+    let best = bestRating(rank);
+
+    glory.ratingAward: GetGloryFromBestRating(best);
+    glory.winsAward: GetGloryFromWins(wins);
+
+    let newRating = GetPersonalEloFromOldElo(rank.rating);
+
+    embed.addField("Estimated Glory", glory.ratingAward + glory.winsAward, true);
+  }
 
   if (count > 1)
     embed.setDescription(`Result ${(index + 1)} of ${count}. React with ◀ or ▶ within ${(time / 60000)} minutes to view other results.`);
