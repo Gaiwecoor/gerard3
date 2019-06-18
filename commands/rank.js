@@ -137,8 +137,8 @@ function rankedEmbed(rank, index = 0, count = null) {
   if (glory.games >= 10) {
     let best = bestRating(rank);
 
-    glory.ratingAward: GetGloryFromBestRating(best);
-    glory.winsAward: GetGloryFromWins(wins);
+    glory.ratingAward = GetGloryFromBestRating(best);
+    glory.winsAward = GetGloryFromWins(wins);
 
     let newRating = GetPersonalEloFromOldElo(rank.rating);
 
