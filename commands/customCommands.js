@@ -21,7 +21,7 @@ function runCustomCommand(msg) {
     .setThumbnail(msg.guild.iconURL);
 
     let prefix = u.prefix(msg);
-    prefix = prefix.replace(/<@!?d+>/g, `@${msg.guild.members.get(msg.client.user.id).displayName} `);
+    prefix = prefix.replace(/<@!?\d+>/g, `@${msg.guild.members.get(msg.client.user.id).displayName} `);
 
     let list = Array.from(customCommands.get(msg.guild.id).values()).map(c => prefix + c.command).sort();
 
