@@ -1,6 +1,6 @@
 const Augur = require("augurbot"),
   u = require("../utils/utils"),
-  TwitchClient = require("twitch");
+  TwitchClient = require("twitch").default;
 
 const twitch = {
   games: new Map(),
