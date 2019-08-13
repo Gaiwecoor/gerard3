@@ -99,7 +99,7 @@ const Module = new Augur.Module()
 
         let users = await twitch.api.users.getUsersByIds(streams.data.map(s => s._data.user_id));
 
-        for (let i = 0; i < Math.min(streams.data.length, 5), i++) {
+        for (let i = 0; i < Math.min(streams.data.length, 5); i++) {
           let stream = streams.data[i]._data;
           let user = users.find(u => u._data.id == stream.user_id)._data;
           embed.addField(user.display_name, `[${stream.title}](https://twitch.tv/${user.display_name}) (${stream.viewer_count} Viewers)`);
