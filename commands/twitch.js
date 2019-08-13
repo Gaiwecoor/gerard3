@@ -11,13 +11,13 @@ async function checkStream(Module) {
   try {
     const bot = Module.handler.client;
 
-    const stream = (await twitch.api.streams.getStreamByUserName("brawlhalla"))._data;
+    const stream = (await twitch.api.streams.getStreamByUserName("brawlhalla"));
 
     if (stream && !twitch.online) {
       bot.user.setActivity(
-        stream.title,
+        stream._data.title,
         {
-          url: stream,
+          url: "https://twitch.tv/brawlhalla",
           type: "STREAMING"
         }
       );
@@ -48,18 +48,18 @@ const Module = new Augur.Module()
       .setColor("#6441A4")
       .setURL("https://www.twitch.tv/brawlhalla");
 
-      const stream = (await twitch.api.streams.getStreamByUserName("brawlhalla"))._data;
+      const stream = (await twitch.api.streams.getStreamByUserName("brawlhalla"));
       if (stream) {
-        if (!twitch.games.has(stream.game_id)) {
+        if (!twitch.games.has(stream._data.game_id)) {
           let game = (await twitch.api.games.getGameById(game.id))._data;
           twitch.games.set(game.id, game);
         }
 
-        embed.setDescription(stream.title)
-        .setThumbnail(stream.thumbnail_url.replace("{width}", "480").replace("{height}", "270"))
-        .addField("Playing", twitch.games.get(stream.game_id))
-        .addField("Current Viewers", stream.viewer_count)
-        .setTimestamp(new Date(stream.started_at));
+        embed.setDescription(stream._data.title)
+        .setThumbnail(stream._data.thumbnail_url.replace("{width}", "480").replace("{height}", "270"))
+        .addField("Playing", twitch.games.get(stream._data.game_id))
+        .addField("Current Viewers", stream._data.viewer_count)
+        .setTimestamp(new Date(stream._data.started_at));
 
         msg.channel.send(embed).catch(e => {
           if (msg.guild && !msg.channel.permissionsFor(msg.client.user).has("EMBED_LINKS")) {
