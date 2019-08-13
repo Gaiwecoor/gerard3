@@ -24,7 +24,7 @@ const Handler = new Augur.Handler(config, {
 Handler.start().then(loadCommands);
 
 // LAST DITCH ERROR HANDLING
-process.on("unhandledRejection", (error, p) => u.alertError(error));
-process.on("uncaughtException", u.alertError);
+process.on("unhandledRejection", (error, p) => u.alertError(error, `Uncaught Rejection${(Handler.client.shard ? " on Shard " + Handler.client.shard.id : "")}`));
+process.on("uncaughtException", error => u.alertError(error, `Uncaught Error${(Handler.client.shard ? " on Shard " + Handler.client.shard.id : "")}`));
 
 module.exports = {Handler: Handler, bot: Handler.client};
