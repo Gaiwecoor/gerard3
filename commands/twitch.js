@@ -120,14 +120,15 @@ const Module = new Augur.Module()
   checkStream(Module);
   return setInterval(checkStream, 5 * 60 * 1000, Module);
 })
-.setInit((streamInfo) => {
+.setInit(async (streamInfo) => {
   if (streamInfo) twitch.online = streamInfo;
-
-  const {clientId, clientSecret} = Module.config.api.twitch;
-  twitch.api = TwitchClient.withClientCredentials(clientId, twitch).helix;
-  let game = (await twitch.api.games.getGameByName("Brawlhalla"))._data;
-  twitch.games.set(game.id, game);
-  twitch.devstream = (await twitch.api.users.getUserByName("Brawlhalla"))._data;
+  try {
+    const {clientId, clientSecret} = Module.config.api.twitch;
+    twitch.api = TwitchClient.withClientCredentials(clientId, twitch).helix;
+    let game = (await twitch.api.games.getGameByName("Brawlhalla"))._data;
+    twitch.games.set(game.id, game);
+    twitch.devstream = (await twitch.api.users.getUserByName("Brawlhalla"))._data;
+  } catch(e) { u.alertError(e, "Twitch Initialization"); }
 })
 .setUnload(() => twitch.online);
 
