@@ -41,7 +41,7 @@ const Module = new Augur.Module()
 .addCommand({name: "devstream",
   category: "Community",
   description: "Link to the Brawlhalla Dev Stream and whether it's live.",
-  process: await (msg) => {
+  process: async (msg) => {
     try {
       let embed = u.embed()
       .setTitle("Brawlhalla Devstream")
@@ -84,7 +84,7 @@ const Module = new Augur.Module()
   description: "Top 5 live Brawlhalla streams",
   info: "Finds five Brawlhalla streams on Twitch with the highest viewer count.",
   aliases: ["streams", "streamers", "stream"],
-  process: await (msg) => {
+  process: async (msg) => {
     try {
       let streams = await twitch.api.getStreams({game: "460316", limit: 10});
       if (streams.data.length > 0) {
