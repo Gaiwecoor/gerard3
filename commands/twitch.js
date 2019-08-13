@@ -124,7 +124,7 @@ const Module = new Augur.Module()
   if (streamInfo) twitch.online = streamInfo;
   try {
     const {clientId, clientSecret} = Module.config.api.twitch;
-    twitch.api = TwitchClient.withClientCredentials(clientId, twitch).helix;
+    twitch.api = TwitchClient.withClientCredentials(clientId, clientSecret).helix;
     let game = (await twitch.api.games.getGameByName("Brawlhalla"))._data;
     twitch.games.set(game.id, game);
     twitch.devstream = (await twitch.api.users.getUserByName("Brawlhalla"))._data;
