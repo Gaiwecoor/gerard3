@@ -35,7 +35,9 @@ const Utils = {
     let errorStack = (error.stack ? error.stack : error);
 
     console.error(Date());
-    if (msg) console.error(`${msg.author.username} in ${(msg.guild ? (msg.guild.name + " > " + msg.channel.name) : "DM")}: ${msg.cleanContent}`);
+    if (msg && typeof msg == "string") console.error(msg);
+    else if (msg) console.error(`${msg.author.username} in ${(msg.guild ? (msg.guild.name + " > " + msg.channel.name) : "DM")}: ${msg.cleanContent}`);
+
     console.error((errorStack ? errorStack : "NULL"));
 
     if (errorStack.length > 1024) errorStack = errorStack.slice(0, 1000);
