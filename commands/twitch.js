@@ -86,7 +86,7 @@ const Module = new Augur.Module()
   aliases: ["streams", "streamers", "stream"],
   process: async (msg) => {
     try {
-      let streams = await twitch.api.getStreams({game: "460316", limit: 10});
+      let streams = await twitch.api.streams.getStreams({game: "460316", limit: 10});
       if (streams.data.length > 0) {
         let embed = u.embed()
         .setTitle("Live Brawlhalla Streams")
