@@ -9,7 +9,7 @@ const Utils = {
   alertError: function(error, msg = null) {
     if (!error || error.name == "DiscordAPIError") return;
     else if (error.error && error.error.code == 503) {
-      if (msg && msg.channel.send) msg.channel.send("The API is down temporarily. Please try again in a few minutes.");
+      if (msg && msg.channel) msg.channel.send("The API is down temporarily. Please try again in a few minutes.");
       return;
     }
 
