@@ -63,7 +63,7 @@ const Module = new Augur.Module()
 
         msg.channel.send(embed).catch(e => {
           if (msg.guild && !msg.channel.permissionsFor(msg.client.user).has("EMBED_LINKS")) {
-            msg.channel.send(msg.author + ", my new system requiresthe `Embed Links` permission for me to work properly, and it looks like I don't have that. Try talking to the server owner to make sure I have the permissions I need.");
+            msg.channel.send(msg.author + ", my new system requires the `Embed Links` permission for me to work properly, and it looks like I don't have that. Try talking to the server owner to make sure I have the permissions I need.");
           } else u.alertError(e, msg);
         });
       } else {
