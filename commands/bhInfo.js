@@ -227,7 +227,7 @@ const Module = new Augur.Module()
 			.addField("Clanhalla", "All things Clan Battles. [[invite]](https://discord.gg/clanhalla)")
 			.addField("Globrawlhalla", "Regional Clan Battles and groups. [[invite]](https://discord.gg/UwEamjf)")
 			.addField("Aus Sea Brawlhalla", "AUS/SEA hub for Brawlhalla tournaments and activities. [[invite]](https://discord.gg/wNj4dqc)")
-			.addField("Yggdrasil", "BRZ hub for Brawlhalla activities. [[invite]](https://discordapp.gg/VxVujFe)");
+			.addField("Yggdrasil", "BRZ hub for Brawlhalla activities. [[invite]](https://discord.gg/VxVujFe)");
 
     let channel = u.botSpam(msg);
 		channel.send(embed).catch(e => {
