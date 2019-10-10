@@ -8,55 +8,60 @@ const Augur = require("augurbot"),
 
 const expandDuration = 10;
 
-async function announce(handler, item) {
+async function announce(item) {
   try {
-    let embed = await feedEmbed(item);
-    let servers = await handler.db.server.announceChannels();
-    let channels = servers
-    .filter(s => handler.client.channels.has(s.announce))
-    .map(s => handler.client.channels.get(s.announce));
+    if (typeof item == "string") item = JSON.parse(item);
+
+    const embed = await feedEmbed(item);
+    const servers = await Module.db.server.announceChannels();
+    const client = Module.handler.client;
+    const channels = servers
+    .filter(s => client.channels.has(s.announce))
+    .map(s => client.channels.get(s.announce));
 
     for (let i = 0; i < channels.length; i++) {
       setTimeout((channel) => {
-        channel.send(embed).catch(e => u.alertError(e, "Announce Handler"));
+        channel.send(embed).catch(e => u.alertError(e, "Announcement Send"));
       }, i * 1200, channels[i]);
     }
-  } catch(e) { u.alertError(e); }
+  } catch(e) { u.alertError(e, "Announce Handler"); }
 }
 
-async function checkNews(handler) {
+async function checkNews() {
   try {
-    let fs = require("fs");
-    let file = process.cwd() + "/data/news.json";
-    let oldNews = fs.readFileSync(file, "utf-8");
-    oldNews = JSON.parse(oldNews);
+    const client = Module.handler.client;
+    const fs = require("fs");
+    const file = process.cwd() + "/data/news.json";
+    let oldNews = JSON.parse(fs.readFileSync(file, "utf-8"));
 
     let item = await fetchFeed();
     let itemId = item.guid[0]._.substr(item.guid[0]._.indexOf("p=") + 2);
     if (!oldNews.includes(itemId)) {
       oldNews.push(itemId);
-      await announce(handler, item);
-      if (!handler.client.shard || handler.client.shard.id == 0)
+      if (client.shard) await client.shard.broadcastEval(`this.emit("newsUpdate", ${JSON.stringify(item)})`);
+      else client.emit("newsUpdate", item);
       fs.writeFileSync(file, JSON.stringify(oldNews));
     }
-  } catch(e) { u.alertError(e); }
+  } catch(e) { u.alertError(e, "Check News"); }
 }
 
 async function feedEmbed(item) {
-  let date = new Date(item.pubDate);
-  let html = await request(item.link[0]);
-  let $ = cheerio.load(html);
+  let embed = u.embed();
+  try {
+    let date = new Date(item.pubDate);
+    let html = await request(item.link[0]);
+    let $ = cheerio.load(html);
 
-  let content = $('meta[property="og:description"]').attr("content");
-  let img = $('meta[property="og:image"]');
+    let content = $('meta[property="og:description"]').attr("content");
+    let img = $('meta[property="og:image"]');
 
-  let embed = u.embed()
-  .setTitle($('meta[property="og:title"]').attr("content"))
-  .setDescription((content ? `${content} ` : "") + `[[Read More]](${item.link[0]})`)
-  .setTimestamp(date)
-  .setURL(item.link[0]);
-  if (img) embed.setThumbnail($('meta[property="og:image"]').attr("content"));
-
+    embed
+    .setTitle($('meta[property="og:title"]').attr("content"))
+    .setDescription((content ? `${content} ` : "") + `[[Read More]](${item.link[0]})`)
+    .setTimestamp(date)
+    .setURL(item.link[0]);
+    if (img) embed.setThumbnail($('meta[property="og:image"]').attr("content"));
+  } catch(e) { u.alertError(e, "News Feed Embed"); }
   return embed;
 }
 
@@ -124,7 +129,7 @@ async function loadBio(msg, legend) {
   } catch(e) {
     if (msg.channel.guild && !msg.channel.permissionsFor(msg.client.user).has(["EMBED_LINKS", "ADD_REACTIONS"]))
       msg.channel.send(msg.author + ", my system requires `Add Reactions` and `Embed Links` permissions for me to function properly and it looks like I don't have those. Try talking to the server owner to make sure I have the permissions I need.");
-    else u.alertError(e);
+    else u.alertError(e, "Load Bio");
   }
 }
 
@@ -171,9 +176,11 @@ const Module = new Augur.Module()
   description: "Get the latest patch notes.",
   aliases: ["patch", "notes"],
   process: async (msg) => {
-    let item = await fetchFeed("patch-notes");
-    let embed = await feedEmbed(item);
-    msg.channel.send(embed);
+    try {
+      let item = await fetchFeed("patch-notes");
+      let embed = await feedEmbed(item);
+      msg.channel.send(embed);
+    } catch(e) { u.alertError(e, msg); }
   }
 })
 .addCommand({name: "pingtest",
@@ -246,9 +253,12 @@ const Module = new Augur.Module()
   },
   permissions: (msg) => Module.config.adminId.includes(msg.author.id)
 })
+.addEvent("newsUpdate", announce)
 .setClockwork(() => {
-  checkNews(Module.handler);
-  return setInterval(checkNews, 3600000, Module.handler);
+  if (!Module.client.shard || Module.client.shard.id === 0) {
+    checkNews();
+    return setInterval(checkNews, 3600000);
+  }
 });
 
 module.exports = Module;
