@@ -255,7 +255,7 @@ const Module = new Augur.Module()
 })
 .addEvent("newsUpdate", announce)
 .setClockwork(() => {
-  if (!Module.client.shard || Module.client.shard.id === 0) {
+  if (!Module.handler.client.shard || Module.handler.client.shard.id === 0) {
     checkNews();
     return setInterval(checkNews, 3600000);
   }
