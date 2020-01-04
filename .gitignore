@@ -4,3 +4,4 @@ node_modules
 site
 storage
 *-.js
+!/config/*-example.json
