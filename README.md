@@ -4,7 +4,11 @@ For basic bot information, visit [Gerard's Home Page](https://gerard.vorpallongs
 
 ## Contributing
 
-Community contributions to Gerard's code are welcome. Gerard runs in Node and is built on the [Augur Bot Framework](https://www.npmjs.com/package/augurbot).
+Community contributions to Gerard's code are welcome. Gerard runs in Node with Mongo DB and is built on the [Augur Bot Framework](https://www.npmjs.com/package/augurbot).
+
+**NOTE:** Gerard is currently not under active development. If you wish to contribute, join the [VLS Bot Support Discord Server](https://gerard.vorpallongspear.com/discord).
+
+Routers for the settings website are not included in this repository.
 
 ---
 
