@@ -6,8 +6,7 @@ function currentPlayers(msg, game) {
   // List people playing the game
   let embed = u.embed()
   .setTitle(`${msg.guild.name} members currently playing ${game}`)
-  .setFooter(`React with 🔁 within ${listDuration} minutes to update this list.`)
-  .setTimestamp();
+  .setFooter(`React with 🔁 within ${listDuration} minutes to update this list.`);
 
   let players = msg.guild.members
   .filter(u => (!u.user.bot && u.presence.game && (u.presence.game.name.toLowerCase().startsWith(game.toLowerCase()))))

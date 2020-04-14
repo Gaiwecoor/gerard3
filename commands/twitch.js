@@ -92,7 +92,6 @@ const Module = new Augur.Module()
         .setTitle("Live Brawlhalla Streams")
         .setThumbnail(twitch.games.get("460316").box_art_url.replace("{width}", "360").replace("{height}", "480"))
         .setColor("#6441A4")
-        .setTimestamp()
         .setDescription("Top five live Brawlhalla streams:");
 
         streams.data.filter(s => s._data.game_id == "460316").sort((a, b)  => b._data.viewer_count - a._data.viewer_count);
