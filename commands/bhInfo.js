@@ -42,7 +42,9 @@ async function checkNews() {
       else client.emit("newsUpdate", item);
       fs.writeFileSync(file, JSON.stringify(oldNews));
     }
-  } catch(e) { u.alertError(e, "Check News"); }
+  } catch(e) { 
+    //u.alertError(e, "Check News"); 
+  }
 }
 
 async function feedEmbed(item) {
