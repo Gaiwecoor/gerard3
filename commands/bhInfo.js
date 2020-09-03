@@ -42,8 +42,8 @@ async function checkNews() {
       else client.emit("newsUpdate", item);
       fs.writeFileSync(file, JSON.stringify(oldNews));
     }
-  } catch(e) { 
-    //u.alertError(e, "Check News"); 
+  } catch(e) {
+    //u.alertError(e, "Check News");
   }
 }
 
@@ -225,18 +225,41 @@ const Module = new Augur.Module()
   description: "Common Brawlhalla Discord Servers",
   info: "Sends invites for Brawlhalla Discord hubs.",
   process: (msg) => {
+    let servers = [
+      {
+        name: "Official Brawlhalla",
+        description: "The official Brawlhalla Discord",
+        invite: "brawlhalla"
+      },
+      {
+        name: "Brawl League",
+        description: "EU / NA Community Tournaments & Mentoring",
+        invite: "https://discord.gg/BrawlLeague"
+      },
+      {
+        name: "Clanhalla",
+        description: "Clan Finding and Recruitment",
+        invite: "https://discord.gg/TkN5Gt3"
+      },
+      {
+        name: "AUS SEA Brawlhalla",
+        description: "Australian / South East Asian Hub",
+        invite: "https://discord.gg/JJV2gAB"
+      },
+      {
+        name: "BrawlXP",
+        description: "South American Community Tournaments",
+        invite: "https://discord.gg/e6hznzJ"
+      },
+    ];
+
     let embed = u.embed()
       .setTitle("Brawlhalla Discord Servers")
-      .setDescription("Here are a few official and large community Brawlhalla Discord Servers:")
-      .addField("Brawlhalla Esports", "Official Brawlhalla esports server. [[invite]](https://discord.gg/myVskrR)")
-			.addField("The Forge", "Official balance discussion server. [[invite]](https://discord.gg/EtBJsBN)")
-			.addField("Brawl League", "Brawlhalla Circuit and Community Tournaments. [[invite]](https://discord.gg/brawlleague)")
-			.addField("Brawl League Academy", "Mentoring for Gold and Under (NA/EU). [[invite]](https://discord.gg/EwBX69r)")
-			.addField("/r/Brawlhalla", "The official Discord server of the /r/brawlhalla subreddit. [[invite]](https://discord.gg/brawlhalla)")
-			.addField("Clanhalla", "All things Clan Battles. [[invite]](https://discord.gg/clanhalla)")
-			.addField("Globrawlhalla", "Regional Clan Battles and groups. [[invite]](https://discord.gg/UwEamjf)")
-			.addField("Aus Sea Brawlhalla", "AUS/SEA hub for Brawlhalla tournaments and activities. [[invite]](https://discord.gg/wNj4dqc)")
-			.addField("Yggdrasil", "BRZ hub for Brawlhalla activities. [[invite]](https://discord.gg/VxVujFe)");
+      .setDescription("Here are a few official and large community Brawlhalla Discord Servers:");
+
+    for (let server of servers) {
+      embed.addField(server.name, `${server.description}. [[invite]](${server.invite})`);
+    }
 
     let channel = u.botSpam(msg);
 		channel.send(embed).catch(e => {
