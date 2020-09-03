@@ -229,7 +229,7 @@ const Module = new Augur.Module()
       {
         name: "Official Brawlhalla",
         description: "The official Brawlhalla Discord",
-        invite: "brawlhalla"
+        invite: "https://discord.gg/brawlhalla"
       },
       {
         name: "Brawl League",
