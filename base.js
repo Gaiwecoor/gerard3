@@ -17,7 +17,10 @@ const Handler = new Augur.Handler(config, {
   errorHandler: u.alertError,
   parse: u.parse,
   clientOptions: {
-    disableEveryone: true
+    disableEveryone: true,
+    ws: {
+      intents: 9474
+    }
   }
 });
 
