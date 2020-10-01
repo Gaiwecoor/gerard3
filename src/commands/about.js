@@ -30,7 +30,7 @@ const Module = new Augur.Module()
         )
         .addField("Patreon", "[Patreon](https://www.patreon.com/gaiwecoor)");
 
-      msg.channel.send(embed).catch((e) => {
+      msg.channel.send({ embed }).catch((e) => {
         if (
           msg.guild &&
           !msg.channel.permissionsFor(msg.client.user).has("EMBED_LINKS")

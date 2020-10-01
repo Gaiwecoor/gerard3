@@ -78,7 +78,7 @@ const Module = new Augur.Module()
             .addField("Current Viewers", stream._data.viewer_count)
             .setTimestamp(new Date(stream._data.started_at));
 
-          msg.channel.send(embed).catch((e) => {
+          msg.channel.send((embed: embed)).catch((e) => {
             if (
               msg.guild &&
               !msg.channel.permissionsFor(msg.client.user).has("EMBED_LINKS")
@@ -96,7 +96,7 @@ const Module = new Augur.Module()
             )
             .setThumbnail(twitch.devstream.profile_image_url);
 
-          msg.channel.send(embed).catch((e) => {
+          msg.channel.send((embed: embed)).catch((e) => {
             if (
               msg.guild &&
               !msg.channel.permissionsFor(msg.client.user).has("EMBED_LINKS")
@@ -156,7 +156,7 @@ const Module = new Augur.Module()
             );
           }
           let channel = u.botSpam(msg);
-          channel.send(embed).catch((e) => {
+          channel.send((embed: embed)).catch((e) => {
             if (
               msg.guild &&
               !channel.permissionsFor(msg.client.user).has("EMBED_LINKS")

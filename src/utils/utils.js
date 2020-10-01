@@ -2,8 +2,8 @@ const Discord = require("discord.js"),
   config = require("../config/config.json"),
   serverSettings = new Map(),
   fs = require("fs"),
-  errorLog = new Discord.WebhookClient(config.error.id, config.error.token),
-  db = require("../" + config.db.model);
+  errorLog = new Discord.WebhookClient(config.error.id, config.error.token);
+db = require('../../' + config.db.model);
 
 const Utils = {
   alertError: function (error, msg = null) {
@@ -16,7 +16,9 @@ const Utils = {
       return;
     }
 
-    let errorInfo = new Discord.RichEmbed().setTimestamp().setTitle(error.name);
+    let errorInfo = new Discord.MessageEmbed()
+      .setTimestamp()
+      .setTitle(error.name);
 
     if (typeof msg == "string") {
       errorInfo.addField("Message", msg);
@@ -93,7 +95,7 @@ const Utils = {
     }
     return name;
   },
-  embed: () => new Discord.RichEmbed().setColor(config.color).setTimestamp(),
+  embed: () => new Discord.MessageEmbed().setColor(config.color).setTimestamp(),
   errorLog: errorLog,
   escapeText: (txt) =>
     txt.replace(/\*/g, "\\*").replace(/_/g, "\\_").replace(/~/g, "\\~"),

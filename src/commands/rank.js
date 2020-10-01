@@ -450,10 +450,12 @@ async function updateRankedEmbed(msg) {
       channel.permissionsFor(msg.client.user).has("MANAGE_MESSAGES")
     ) {
       await msg.clearReactions();
-      m = await msg.edit(rankedEmbed(rank, index, results.length));
+      m = await msg.edit({ embed: rankedEmbed(rank, index, results.length) });
     } else {
       msg.delete();
-      m = await channel.send(rankedEmbed(rank, index, results.length));
+      m = await channel.send({
+        embed: rankedEmbed(rank, index, results.length),
+      });
       rankedResults.set(m.id, { results, index, user, cache });
       rankedResults.delete(msg.id);
     }
@@ -534,7 +536,7 @@ const Module = new Augur.Module()
             }
 
             let channel = u.botSpam(msg);
-            channel.send(embed).catch((e) => {
+            channel.send({ embed }).catch((e) => {
               if (
                 channel.guild &&
                 !channel.permissionsFor(msg.client.user).has("EMBED_LINKS")
@@ -568,7 +570,9 @@ const Module = new Augur.Module()
 
             let channel = u.botSpam(msg);
             try {
-              let m = await channel.send(rankedEmbed(rank, 0, results.length));
+              let m = await channel.send({
+                embed: rankedEmbed(rank, 0, results.length),
+              });
               if (results.length > 1) {
                 rankedResults.set(m.id, {
                   results: results,
@@ -650,7 +654,7 @@ const Module = new Augur.Module()
           }
 
           let channel = u.botSpam(msg);
-          channel.send(embed).catch((e) => {
+          channel.send({ embed }).catch((e) => {
             if (
               channel.guild &&
               !channel.permissionsFor(msg.client.user).has("EMBED_LINKS")
@@ -745,7 +749,7 @@ const Module = new Augur.Module()
 
         if (embed) {
           let channel = u.botSpam(msg);
-          channel.send(embed).catch((e) => {
+          channel.send({ embed }).catch((e) => {
             if (
               channel.guild &&
               !channel.permissionsFor(msg.client.user).has("EMBED_LINKS")

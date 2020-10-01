@@ -55,7 +55,7 @@ function checkBoard(msg, region, board = "1v1") {
           );
 
         let channel = u.botSpam(msg);
-        channel.send(embed).catch((e) => {
+        channel.send({ embed }).catch((e) => {
           if (
             msg.guild &&
             !channel.permissionsFor(msg.client.user).has("EMBED_LINKS")

@@ -1,7 +1,7 @@
 const Augur = require("augurbot"),
   Express = require("express"),
   bodyParser = require("body-parser"),
-  config = require("../config/site.json"),
+  config = require("../../src/config/site.json"),
   fs = require("fs"),
   path = require("path"),
   session = require("express-session"),

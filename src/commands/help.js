@@ -25,8 +25,10 @@ const Module = new Augur.Module().addCommand({
         )
         .setDescription(
           `You have access to the following commands. For more info, type \`${prefix}help <command>\`.`
-        )
-        .setURL(Module.config.homePage + "commands");
+        );
+      if (Module.config.homePage) {
+        embed.setURL(Module.config.homePage + "commands");
+      }
 
       let categories = commands
         .filter((c) => !c.hidden && c.category != "General")
@@ -48,7 +50,7 @@ const Module = new Augur.Module().addCommand({
               true
             );
             if (i == 20) {
-              msg.author.send({ embed: embed });
+              msg.author.send({ embed: embed }).catch(console.error);
               embed = u
                 .embed()
                 .setTitle(
@@ -67,7 +69,7 @@ const Module = new Augur.Module().addCommand({
           });
       });
 
-      msg.author.send({ embed: embed });
+      msg.author.send({ embed: embed }).catch(console.error);
     } else {
       // SINGLE COMMAND HELP
       let command = null;
@@ -90,8 +92,7 @@ const Module = new Augur.Module().addCommand({
             "Aliases",
             command.aliases.map((a) => `!${a}`).join(", ")
           );
-
-        msg.author.send(embed);
+        msg.author.send({ embed }).catch(console.error);
       } else {
         msg.reply("I don't have a command by that name.").then(u.clean);
       }

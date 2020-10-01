@@ -78,9 +78,9 @@ async function roleMe(member, msg = null) {
           );
         roles = roles.filter((r) => !member.roles.has(r));
 
-        for (let i = 0; i < roles.length; i++) await member.addRole(roles[i]);
+        for (let i = 0; i < roles.length; i++) await member.roles.add(roles[i]);
         for (let i = 0; i < removeRoles.length; i++)
-          await member.removeRole(removeRoles[i]);
+          await member.roles.remove(removeRoles[i]);
 
         //if (msg) msg.reply(`I gave you the ${roles.map(r => guild.roles.get(r).name).join(", ")} role(s).`).then(u.clean);
         if (msg) msg.react("👌");

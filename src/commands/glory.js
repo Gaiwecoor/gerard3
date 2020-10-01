@@ -63,7 +63,7 @@ const Module = new Augur.Module().addCommand({
               .addField("Estimated Reset Rating", newRating, true)
               .setURL("http://www.brawlhalla.com/glory-calculator/");
 
-            u.botSpam(msg).send(embed);
+            u.botSpam(msg).send({ embed });
           } else
             u.botSpam(msg).send(
               msg.author +

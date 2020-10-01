@@ -23,7 +23,7 @@ async function announce(item) {
       setTimeout(
         (channel) => {
           channel
-            .send(embed)
+            .send({ embed })
             .catch((e) => u.alertError(e, "Announcement Send"));
         },
         i * 1200,
@@ -73,8 +73,11 @@ async function feedEmbed(item) {
       .setDescription(
         (content ? `${content} ` : "") + `[[Read More]](${item.link[0]})`
       )
-      .setTimestamp(date)
-      .setURL(item.link[0]);
+      .setTimestamp(date);
+    if (item.link[0]) {
+      embed.setURL(item.link[0]);
+    }
+
     if (img) embed.setThumbnail($('meta[property="og:image"]').attr("content"));
   } catch (e) {
     u.alertError(e, "News Feed Embed");
@@ -209,7 +212,7 @@ const Module = new Augur.Module()
       try {
         let item = await fetchFeed("community");
         let embed = await feedEmbed(item);
-        msg.channel.send(embed);
+        msg.channel.send({ embed });
       } catch (e) {
         u.alertError(e, msg);
       }
@@ -229,7 +232,7 @@ const Module = new Augur.Module()
             let embed = legendEmbed(legend);
             let channel = u.botSpam(msg);
 
-            let m = await channel.send(embed);
+            let m = await channel.send({ embed });
             loadBio(m, legend);
           } else msg.reply("I couldn't find that legend.").then(u.clean);
         } else
@@ -250,7 +253,7 @@ const Module = new Augur.Module()
       try {
         let item = await fetchFeed("patch-notes");
         let embed = await feedEmbed(item);
-        msg.channel.send(embed);
+        msg.channel.send({ embed });
       } catch (e) {
         u.alertError(e, msg);
       }
@@ -298,7 +301,7 @@ const Module = new Augur.Module()
 
       let channel = u.botSpam(msg);
 
-      channel.send(embed).catch((e) => {
+      channel.send({ embed }).catch((e) => {
         if (
           msg.guild &&
           !channel.permissionsFor(msg.client.user).has("EMBED_LINKS")
@@ -360,7 +363,7 @@ const Module = new Augur.Module()
       }
 
       let channel = u.botSpam(msg);
-      channel.send(embed).catch((e) => {
+      channel.send({ embed }).catch((e) => {
         if (
           msg.guild &&
           !channel.permissionsFor(msg.client.user).has("EMBED_LINKS")
