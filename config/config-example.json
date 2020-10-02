@@ -22,14 +22,14 @@
     }
   },
   "events": [
-		"disconnect",
-		"error",
+    "disconnect",
+    "error",
     "guildMemberAdd",
-		"messageReactionAdd",
+    "messageReactionAdd",
     "messageReactionRemove",
-		"presenceUpdate",
+    "presenceUpdate",
     "newsUpdate"
-	],
+  ],
   "error": {
     "id": "",
     "token": ""

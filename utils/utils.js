@@ -6,16 +6,17 @@ const Discord = require("discord.js"),
   db = require("../" + config.db.model);
 
 const Utils = {
-  alertError: function(error, msg = null) {
+  alertError: function (error, msg = null) {
     if (!error || error.name == "DiscordAPIError") return;
     else if (error.error && error.error.code == 503) {
-      if (msg && msg.channel) msg.channel.send("The API is down temporarily. Please try again in a few minutes.");
+      if (msg && msg.channel)
+        msg.channel.send(
+          "The API is down temporarily. Please try again in a few minutes."
+        );
       return;
     }
 
-    let errorInfo = new Discord.RichEmbed()
-    .setTimestamp()
-    .setTitle(error.name);
+    let errorInfo = new Discord.RichEmbed().setTimestamp().setTitle(error.name);
 
     if (typeof msg == "string") {
       errorInfo.addField("Message", msg);
@@ -23,33 +24,51 @@ const Utils = {
       let bot = msg.client;
       if (bot.shard) errorInfo.addField("Shard", bot.shard.id, true);
 
-      msg.channel.send("I've run into an error. I've let my owner know.")
-      .then(Utils.clean);
+      msg.channel
+        .send("I've run into an error. I've let my owner know.")
+        .then(Utils.clean);
 
       errorInfo
-      .addField("User", msg.author.username, true)
-      .addField("Location", (msg.guild ? `${msg.guild.name} > ${msg.channel.name}` : "PM"), true)
-      .addField("Command", (msg.cleanContent ? msg.cleanContent : "EMPTY"), true)
+        .addField("User", msg.author.username, true)
+        .addField(
+          "Location",
+          msg.guild ? `${msg.guild.name} > ${msg.channel.name}` : "PM",
+          true
+        )
+        .addField(
+          "Command",
+          msg.cleanContent ? msg.cleanContent : "EMPTY",
+          true
+        );
     }
 
-    let errorStack = (error.stack ? error.stack : error);
+    let errorStack = error.stack ? error.stack : error;
 
     console.error(Date());
     if (msg && typeof msg == "string") console.error(msg);
-    else if (msg) console.error(`${msg.author.username} in ${(msg.guild ? (msg.guild.name + " > " + msg.channel.name) : "DM")}: ${msg.cleanContent}`);
+    else if (msg)
+      console.error(
+        `${msg.author.username} in ${
+          msg.guild ? msg.guild.name + " > " + msg.channel.name : "DM"
+        }: ${msg.cleanContent}`
+      );
 
-    console.error((errorStack ? errorStack : "NULL"));
+    console.error(errorStack ? errorStack : "NULL");
 
     if (errorStack.length > 1024) errorStack = errorStack.slice(0, 1000);
-    errorInfo.addField("Error", (errorStack ? errorStack : "NULL"));
+    errorInfo.addField("Error", errorStack ? errorStack : "NULL");
     errorLog.send(errorInfo);
   },
-  botSpam: function(msg) {
+  botSpam: function (msg) {
     if (msg.guild) {
       let botspam = db.server.getSetting(msg.guild, "botspam");
-      if (botspam && (botspam != msg.channel.id)) {
-        msg.reply(`I've placed your results in <#${botspam}> to keep things nice and tidy in here. Hurry before they get cold!`)
-          .then(Utils.clean).catch();
+      if (botspam && botspam != msg.channel.id) {
+        msg
+          .reply(
+            `I've placed your results in <#${botspam}> to keep things nice and tidy in here. Hurry before they get cold!`
+          )
+          .then(Utils.clean)
+          .catch();
         return msg.guild.channels.get(botspam) || msg.channel;
       }
     }
@@ -62,11 +81,13 @@ const Utils = {
     let ename = escape(name);
     try {
       name = decodeURIComponent(ename);
-    } catch(e1) {
+    } catch (e1) {
       try {
         let index = ename.lastIndexOf("%");
-        name = decodeURIComponent(ename.substring(0, index) + ename.substring(index + 3));
-      } catch(e2) {
+        name = decodeURIComponent(
+          ename.substring(0, index) + ename.substring(index + 3)
+        );
+      } catch (e2) {
         name = fallback;
       }
     }
@@ -74,9 +95,10 @@ const Utils = {
   },
   embed: () => new Discord.RichEmbed().setColor(config.color).setTimestamp(),
   errorLog: errorLog,
-  escapeText: (txt) => txt.replace(/\*/g,"\\*").replace(/_/g,"\\_").replace(/~/g,"\\~"),
+  escapeText: (txt) =>
+    txt.replace(/\*/g, "\\*").replace(/_/g, "\\_").replace(/~/g, "\\~"),
   handler: null,
-  parse: function(msg) {
+  parse: function (msg) {
     try {
       let prefix = Utils.prefix(msg);
       let message = msg.content;
@@ -87,40 +109,41 @@ const Utils = {
       } else if (message.startsWith(prefix)) {
         parse = message.slice(prefix.length);
       } else if (message.startsWith(`<@${msg.client.user.id}>`)) {
-        parse = message.slice((`<@${msg.client.user.id}>`).length);
+        parse = message.slice(`<@${msg.client.user.id}>`.length);
       } else if (message.startsWith(`<@!${msg.client.user.id}>`)) {
-        parse = message.slice((`<@!${msg.client.user.id}>`).length);
+        parse = message.slice(`<@!${msg.client.user.id}>`.length);
       }
 
       if (parse) {
         parse = parse.trim().split(" ");
         return {
           command: parse.shift().toLowerCase(),
-          suffix: parse.join(" ")
+          suffix: parse.join(" "),
         };
       } else return null;
-    } catch(e) {
+    } catch (e) {
       Utils.alertError(e, msg);
       return null;
     }
   },
-  prefix: function(msg) {
+  prefix: function (msg) {
     try {
       if (msg.guild) return db.server.getSetting(msg.guild, "prefix");
       else return config.prefix;
-    } catch(e) {
+    } catch (e) {
       Utils.alertError(e, msg);
       return config.prefix;
     }
   },
-  setHandler: (handler) => Utils.handler = handler,
-  userMentions: function(msg) {
+  setHandler: (handler) => (Utils.handler = handler),
+  userMentions: function (msg) {
     // Useful to ensure the bot isn't included in the mention list,
     // such as when the bot mention is the command prefix
     let userMentions = msg.mentions.users;
-    if (userMentions.has(msg.client.user.id)) userMentions.delete(msg.client.user.id);
-    return (userMentions.size > 0 ? userMentions : null);
-  }
+    if (userMentions.has(msg.client.user.id))
+      userMentions.delete(msg.client.user.id);
+    return userMentions.size > 0 ? userMentions : null;
+  },
 };
 
 module.exports = Utils;

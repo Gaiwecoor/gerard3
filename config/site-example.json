@@ -1,39 +1,39 @@
 {
-	"port": 8080,
-	"root": "http://localhost:8080",
-	"sessionSecret": "",
-	"resourceKey": "",
-	"discord": {
-		"cb": "",
-		"oauth": {
-			"client": {
-				"id": "",
-				"secret": ""
-			},
-			"auth": {
-				"tokenHost": "https://discordapp.com",
-				"tokenPath": "/api/oauth2/token",
-				"authorizePath": "/api/oauth2/authorize",
-				"revokePath": "/api/oauth2/token/revoke"
-			}
-		}
-	},
-	"steam": {
-		"cb": "",
-		"key": ""
-	},
-	"twitch": {
-		"cb": "",
-		"oauth": {
-			"client": {
-				"id": "",
-				"secret": ""
-			},
-			"auth": {
-				"tokenHost": "https://id.twitch.tv",
-				"tokenPath": "/oauth2/token",
-				"authorizePath": "/oauth2/authorize"
-			}
-		}
-	}
+  "port": 8080,
+  "root": "http://localhost:8080",
+  "sessionSecret": "",
+  "resourceKey": "",
+  "discord": {
+    "cb": "",
+    "oauth": {
+      "client": {
+        "id": "",
+        "secret": ""
+      },
+      "auth": {
+        "tokenHost": "https://discordapp.com",
+        "tokenPath": "/api/oauth2/token",
+        "authorizePath": "/api/oauth2/authorize",
+        "revokePath": "/api/oauth2/token/revoke"
+      }
+    }
+  },
+  "steam": {
+    "cb": "",
+    "key": ""
+  },
+  "twitch": {
+    "cb": "",
+    "oauth": {
+      "client": {
+        "id": "",
+        "secret": ""
+      },
+      "auth": {
+        "tokenHost": "https://id.twitch.tv",
+        "tokenPath": "/oauth2/token",
+        "authorizePath": "/oauth2/authorize"
+      }
+    }
+  }
 }
