@@ -4,7 +4,7 @@ const Augur = require("augurbot"),
   path = require("path"),
   u = require("./utils/utils");
 
-const disabledCommands = ["twitch.js"];
+const disabledCommands = [];
 
 function loadCommands(Handler) {
   Handler.db.init(Handler.client);

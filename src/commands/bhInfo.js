@@ -169,7 +169,7 @@ async function loadBio(msg, legend) {
 
     if (reactions.size > 0) {
       let embed = legendEmbed(legend, true);
-      let m = await msg.edit(embed);
+      let m = await msg.edit({embed});
 
       if (
         msg.channel.type == "text" &&
