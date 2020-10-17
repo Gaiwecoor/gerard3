@@ -2,21 +2,25 @@ const Discord = require("discord.js"),
   config = require("../config/config.json"),
   serverSettings = new Map(),
   fs = require("fs"),
-  errorLog = new Discord.WebhookClient(config.error.id, config.error.token),
-  db = require("../" + config.db.model);
+  errorLog = new Discord.WebhookClient(config.error.id, config.error.token);
+const db = require('../../' + config.db.model);
 
 const Utils = {
   alertError: function (error, msg = null) {
     if (!error || error.name == "DiscordAPIError") return;
     else if (error.error && error.error.code == 503) {
-      if (msg && msg.channel)
+      if (msg && msg.channel){
         msg.channel.send(
           "The API is down temporarily. Please try again in a few minutes."
         );
+      }
       return;
     }
+    console.error(error);
 
-    let errorInfo = new Discord.RichEmbed().setTimestamp().setTitle(error.name);
+    let errorInfo = new Discord.MessageEmbed()
+      .setTimestamp()
+      .setTitle(error.name);
 
     if (typeof msg == "string") {
       errorInfo.addField("Message", msg);
@@ -93,7 +97,7 @@ const Utils = {
     }
     return name;
   },
-  embed: () => new Discord.RichEmbed().setColor(config.color).setTimestamp(),
+  embed: () => new Discord.MessageEmbed().setColor(config.color).setTimestamp(),
   errorLog: errorLog,
   escapeText: (txt) =>
     txt.replace(/\*/g, "\\*").replace(/_/g, "\\_").replace(/~/g, "\\~"),
@@ -145,5 +149,6 @@ const Utils = {
     return userMentions.size > 0 ? userMentions : null;
   },
 };
+
 
 module.exports = Utils;

@@ -50,7 +50,7 @@ async function reloadList(msg, game) {
         m = await msg.edit(embed);
       } else {
         msg.delete();
-        m = await msg.channel.send(embed);
+        m = await msg.channel.send({ embed });
       }
       reloadList(m, game);
     } else msg.delete();
@@ -83,7 +83,7 @@ const Module = new Augur.Module().addCommand({
       await msg.guild.fetchMembers();
 
       let embed = currentPlayers(msg, suffix);
-      let m = await u.botSpam(msg).send(embed);
+      let m = await u.botSpam(msg).send({ embed });
       reloadList(m, suffix);
     } catch (e) {
       u.alertError(e, msg);

@@ -72,7 +72,7 @@ const Module = new Augur.Module().addCommand({
           let clan = await bh.getClanStats(stats.clan.clan_id);
 
           let channel = u.botSpam(msg);
-          channel.send(clanEmbed(clan)).catch((e) => {
+          channel.send({embed: clanEmbed(clan)}).catch((e) => {
             if (
               msg.guild &&
               !channel.permissionsFor(msg.client.user).has("EMBED_LINKS")

@@ -1,4 +1,5 @@
 const Augur = require("augurbot"),
+  config = require("../config/config.json"),
   u = require("../utils/utils");
 
 async function roleMe(member, msg = null) {
@@ -73,7 +74,7 @@ async function roleMe(member, msg = null) {
             (r, i, a) =>
               !roles.includes(r) &&
               member.roles.has(r) &&
-              i == a.indexOf(r) &&
+              i === a.indexOf(r) &&
               member.guild.roles.has(r)
           );
         roles = roles.filter((r) => !member.roles.has(r));
@@ -215,8 +216,9 @@ const Module = new Augur.Module()
               .reply("your clan doesn't appear to have any members!")
               .then(u.clean);
         } else
+          // Todo: Test homepage link
           msg.reply(
-            "you must first set your server's clan id and role at <https://gerard.vorpallongspear.com/manage>"
+            `you must first set your server's clan id and role at <${config.homePage}>`
           );
       } catch (e) {
         u.alertError(e, msg);

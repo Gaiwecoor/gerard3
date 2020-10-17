@@ -40,7 +40,7 @@ function runCustomCommand(msg) {
       .sort();
 
     embed.setDescription(list.join("\n"));
-    msg.author.send(embed);
+    msg.author.send({ embed });
   }
 }
 

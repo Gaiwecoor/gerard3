@@ -47,7 +47,7 @@ Module = new Augur.Module()
           });
 
         let channel = u.botSpam(msg);
-        channel.send(embed).catch((e) => {
+        channel.send({ embed }).catch((e) => {
           if (
             msg.guild &&
             !channel.permissionsFor(msg.client.user).has("EMBED_LINKS")
@@ -117,7 +117,7 @@ Module = new Augur.Module()
           });
 
         let channel = u.botSpam(msg);
-        channel.send(embed).catch((e) => {
+        channel.send({ embed }).catch((e) => {
           if (
             msg.guild &&
             !channel.permissionsFor(msg.client.user).has("EMBED_LINKS")

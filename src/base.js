@@ -4,14 +4,16 @@ const Augur = require("augurbot"),
   path = require("path"),
   u = require("./utils/utils");
 
+const disabledCommands = [];
+
 function loadCommands(Handler) {
   Handler.db.init(Handler.client);
   u.setHandler(Handler);
   Handler.client.on("ready", () => console.log("Ready at:", Date()));
-  fs.readdirSync("./commands")
-    .filter((c) => c.endsWith(".js"))
+  fs.readdirSync("./src/commands")
+    .filter((c) => c.endsWith(".js") && !disabledCommands.includes(c))
     .forEach((command) => {
-      Handler.register(path.resolve(process.cwd(), "./commands/", command));
+      Handler.register(path.resolve(process.cwd(), "src/commands/", command));
     });
 }
 
@@ -21,12 +23,12 @@ const Handler = new Augur.Handler(config, {
   clientOptions: {
     disableEveryone: true,
     ws: {
-      intents: 9474,
+      // intents: 9474
     },
   },
 });
 
-Handler.start().then(loadCommands);
+Handler.start().then(loadCommands).catch(console.error);
 
 // LAST DITCH ERROR HANDLING
 process.on("unhandledRejection", (error, p) =>
