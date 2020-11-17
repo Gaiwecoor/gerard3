@@ -17,11 +17,14 @@ Routers for the settings website are not included in this repository.
 Save your `command.js` file in the `./commands` directory.
 
 The file begins with:
+
 ```
 const Augur = require("augurbot");
 const Module = new Augur.Module();
 ```
+
 And finish the file with:
+
 ```
 module.exports = Module;
 ```
@@ -29,6 +32,7 @@ module.exports = Module;
 In between, you can add one or more commands and event handlers, as well as a clockwork and unload function.
 
 #### Commands
+
 ```
 Module.addCommand({
   name: "commandname", // required
@@ -44,16 +48,19 @@ Module.addCommand({
 ```
 
 #### Events
+
 ```
 Module.addEvent("eventName", (...args) => {});
 ```
 
 #### Clockwork
+
 ```
 Module.addClockwork((bot) => { return setInterval(); });
 ```
 
 #### Unload
+
 ```
 Module.setUnload((bot) => {});
 ```

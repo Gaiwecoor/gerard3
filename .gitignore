@@ -1,7 +1,8 @@
-config/*
+src/config/*
+src/commands/botAdmin.js
 data
 node_modules
 site
 storage
 *-.js
-!config/*-example.json
+!src/config/*-example.json
