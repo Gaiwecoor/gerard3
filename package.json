@@ -16,7 +16,7 @@
     "markdown": "^0.5.0",
     "mongoose": "^5.5.4",
     "opusscript": "0.0.6",
-    "pug": "^2.0.4",
+    "pug": "^3.0.1",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
     "simple-oauth2": "^2.2.1",
