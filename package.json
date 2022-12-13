@@ -9,7 +9,7 @@
     "brawlhalla-api": "^4.0.5",
     "cheerio": "^1.0.0-rc.3",
     "discord.js": "^11.5.1",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "express-session": "^1.16.1",
     "html-entities": "^1.2.1",
     "jwt-simple": "^0.5.6",
